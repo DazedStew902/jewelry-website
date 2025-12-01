@@ -32,8 +32,11 @@ closeBtn.addEventListener("click", () => {
    Wrapped in DOM ready
 ---------------------------------------- */
 
-document.addEventListener("DOMContentLoaded", () => {
+/* ---------------------------------------
+   HERO SLIDER + PAGE INIT
+---------------------------------------- */
 
+document.addEventListener("DOMContentLoaded", () => {
   const heroSlider = document.getElementById("heroSlider");
   const heroSlides = [...document.querySelectorAll(".hero-slide")];
   const heroPrev = document.getElementById("heroPrev");
@@ -41,9 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const heroDotsContainer = document.getElementById("heroDots");
 
   let heroCurrentIndex = 0;
+  let heroDots = [];
 
   if (heroSlider && heroSlides.length > 0 && heroDotsContainer) {
-
     // Create dots
     heroSlides.forEach((_, index) => {
       const dot = document.createElement("button");
@@ -54,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
       heroDotsContainer.appendChild(dot);
     });
 
-    const heroDots = [...document.querySelectorAll(".hero-dot")];
+    heroDots = [...document.querySelectorAll(".hero-dot")];
 
     function heroGoToSlide(index) {
       if (index < 0) index = heroSlides.length - 1;
@@ -62,19 +65,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
       heroCurrentIndex = index;
 
+      // activate the slide
       heroSlides.forEach((slide, i) => {
         slide.classList.toggle("is-active", i === index);
       });
 
+      // activate the correct dot / progress bar
       heroDots.forEach((dot, i) => {
         dot.classList.toggle("is-active", i === index);
       });
     }
 
+    // 🔁 AUTO-ADVANCE: now everything is defined
+    setInterval(() => {
+      heroGoToSlide(heroCurrentIndex + 1);
+    }, 5000);
+
     // Arrows
     if (heroPrev && heroNext) {
-      heroPrev.addEventListener("click", () => heroGoToSlide(heroCurrentIndex - 1));
-      heroNext.addEventListener("click", () => heroGoToSlide(heroCurrentIndex + 1));
+      heroPrev.addEventListener("click", () =>
+        heroGoToSlide(heroCurrentIndex - 1)
+      );
+      heroNext.addEventListener("click", () =>
+        heroGoToSlide(heroCurrentIndex + 1)
+      );
     }
 
     // Swipe
@@ -105,6 +119,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  /* ---------------------------------------
+     SMOOTH SCROLL FOR NAV + MOBILE MENU
+  ---------------------------------------- */
+
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute("href"));
+      if (!target) return;
+
+      target.scrollIntoView({ behavior: "smooth" });
+
+      if (mobileNav.classList.contains("open")) {
+        mobileNav.classList.remove("open");
+      }
+    });
+  });
 }); // END of DOMContentLoaded
 
 
@@ -128,3 +159,68 @@ const revealObserver = new IntersectionObserver(
 
 revealElements.forEach(el => revealObserver.observe(el));
 
+/* =====================================
+   SMART NAVBAR BEHAVIOR
+   - navbar stays under the header
+   - hides when scrolling down
+   - shows when scrolling up
+===================================== */
+
+const header = document.querySelector(".top-header");
+const nav = document.querySelector(".nav-bar");
+
+window.addEventListener("load", () => {
+  positionNavBar();
+  adjustHeroOffset();
+});
+
+function positionNavBar() {
+  const headerHeight = header.offsetHeight;
+
+  // Move the navbar below the header
+  nav.style.top = headerHeight + "px";
+}
+positionNavBar();
+window.addEventListener("resize", positionNavBar);
+
+/* =====================================
+   SMART NAVBAR BEHAVIOR
+   - navbar stays under the header
+   - hides when scrolling down
+   - shows when scrolling up
+   - background shifts now handled by section colors
+===================================== */
+let lastScrollY = window.scrollY;
+
+window.addEventListener("scroll", () => {
+  const currentY = window.scrollY;
+
+  // Hide navbar when scrolling down, show when scrolling up
+  if (currentY > lastScrollY) {
+    nav.classList.add("hide");
+  } else {
+    nav.classList.remove("hide");
+  }
+
+  lastScrollY = currentY;
+});
+
+function adjustHeroOffset() {
+  const offset = header.offsetHeight + nav.offsetHeight;
+  document.documentElement.style.setProperty("--hero-offset", offset + "px");
+}
+adjustHeroOffset();
+window.addEventListener("resize", adjustHeroOffset);
+
+/* -------------------------------------------------
+   PARALLAX LIGHT MOTION ON SCROLL
+-------------------------------------------------- */
+window.addEventListener("scroll", () => {
+  const y = window.scrollY;
+
+  document.body.style.backgroundPositionY = -(y * 0.07) + "px";
+
+  document.querySelectorAll(".light-streak").forEach((el, i) => {
+    el.style.transform = `translateX(${y * (0.05 + i*0.03)}px) rotate(15deg)`;
+  });
+});

@@ -6,12 +6,29 @@
   --teal: #3B868F;
 }
 
-/* base type */
+html {
+  scroll-behavior: smooth;
+}
+
+/* -------------------------------------------------
+   GLOBAL BACKGROUND BASE
+   Luxury: gold + ice blue ambient light
+-------------------------------------------------- */
 body {
   margin: 0;
-  font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: var(--cream);
-  color: var(--dark-gray);
+  font-family: 'Montserrat', system-ui, -apple-system;
+
+  /* Layered metallic + ambient lighting gradients */
+  background:
+      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.85), transparent 65%),
+      radial-gradient(circle at 85% 25%, rgba(212, 175, 55, 0.45), transparent 65%),
+      radial-gradient(circle at 50% 80%, rgba(59, 134, 143, 0.40), transparent 65%),
+      #f8f7f4;
+
+  background-size: 200% 200%;
+  background-attachment: fixed;
+  transition: background-position 1.5s ease, background-size 1.5s ease;
+  overflow-x: hidden;
 }
 
 /* headings / logo use Playfair Display for a luxurious feel */
@@ -20,22 +37,46 @@ h1, h2, h3, .header-logo {
   letter-spacing: 0.2px;
 }
 
-/* HEADER */
+/* HEADER: fixed and always visible */
 .top-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 1rem 1.5rem;
-background: var(--light-gray);
-border-bottom: 2px solid var(--gold);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--light-gray);
+  border-bottom: 2px solid var(--gold);
+  z-index: 2000;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+
+/* Header animation on scroll */
+.top-header.is-scrolled {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
 }
 
 .header-phone,
 .header-address {
+white-space: nowrap;
 font-size: 0.9rem;
+margin: 0.1rem;
 font-weight: 600;
 color: var(--dark-gray);
 text-decoration: none;
+}
+
+.header-phone,
+.header-address {
+  justify-self: start; /* left */
+}
+
+.header-address {
+  justify-self: end; /* right */
+  white-space: nowrap;
+  min-width: 220px;
 }
 
 /* ---------------------------------------
@@ -106,9 +147,22 @@ font-size: 0.85rem;
 /* ---------------------------
       DESKTOP NAV BAR
 ---------------------------- */
+
+/* NAVBAR: fixed BELOW header */
 .nav-bar {
-  background: var(--teal); /* The blue color */
-  padding: 0.8rem 1.5rem;
+  position: fixed;
+  left: 0;
+  width: 100%;
+  background: var(--teal);
+  z-index: 1999;
+
+  /* these animate when scrolling */
+  transition: transform 0.3s ease;
+}
+
+/* Hide navbar on scroll down */
+.nav-bar.hide {
+  transform: translateY(-100%);
 }
 
 .nav-links {
@@ -316,10 +370,11 @@ font-size: 0.85rem;
 /* Hero container */
 .hero {
   display: flex;
+  margin-top: calc(var(--hero-offset));
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 1rem;
-  background: var(--cream);
+  background: transparent;
 }
 
 /* Slider frame */
@@ -444,28 +499,41 @@ font-size: 0.85rem;
 }
 
 /* ---------------------------------------
-   HERO DOTS (CENTERED UNDER HERO)
+   HERO SLIDE INDICATORS – PREMIUM STYLE
 ---------------------------------------- */
-.hero-dots {
-  margin-top: 0.75rem;
-  display: flex;
-  justify-content: center;
-  gap: 0.4rem;
+/* SLIDE INDICATORS – BAR STYLE */
+.hero-dot {
+  width: 46px;
+  height: 6px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.25);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: none;
 }
 
-.hero-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 1px solid var(--teal);
-  background: transparent;
-  cursor: pointer;
-  transition: background 0.25s ease, transform 0.25s ease;
+/* progress bar overlay */
+.hero-dot::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: var(--gold);
+  transition: width 5s linear; /* duration of progress */
+  opacity: 0;
+}
+
+.hero-dot.is-active::after {
+  width: 100%;
+  opacity: 1;
 }
 
 .hero-dot.is-active {
-  background: var(--teal);
-  transform: scale(1.1);
+  background: rgba(0,0,0,0.35);
+  transition: background 0.3s ease;
 }
 
 /* ---------------------------------------
@@ -506,7 +574,7 @@ font-size: 0.85rem;
   display: flex;
   justify-content: center;
   padding: 2rem 1rem 3rem 1rem;
-  background: var(--cream); /* matches overall page background */
+  background: transparent; /* matches overall page background */
 }
 
 .shop-promo-inner {
@@ -604,7 +672,7 @@ font-size: 0.85rem;
   display: block;
   justify-content: center;
   padding: 3rem 1rem 3.5rem 1rem;
-  background: var(--cream);
+  background: transparent;
 }
 
 .collections-inner {
@@ -823,8 +891,8 @@ font-size: 0.85rem;
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
-  margin-top: 3rem;         /* a little more spacing from collections */
-  margin-bottom: 1.2rem;
+  margin-top: 5.5rem;         /* a little more spacing from collections */
+  margin-bottom: 0rem;
   letter-spacing: 1px;
   color: var(--dark-gray);
   position: relative;
@@ -853,6 +921,7 @@ font-size: 0.85rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;              /* spacing between cards */
+  background: transparent;
 }
 
 /* ---------------------------------------
@@ -1028,9 +1097,10 @@ font-size: 0.85rem;
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
-  margin-top: 3rem;
-  margin-bottom: 1.2rem;
+  margin-top: 6rem;
+  margin-bottom: 0rem;
   letter-spacing: 1px;
+  grid-column: 1 / -1;
   color: var(--dark-gray);
   position: relative;
 }
@@ -1060,6 +1130,7 @@ font-size: 0.85rem;
   padding: 0 1rem;
   position: relative;
   z-index: 1;
+  background: transparent;
 }
 
 /* Stack on mobile */
@@ -1215,6 +1286,7 @@ font-size: 0.85rem;
   margin: 2.5rem auto 4rem;
   padding: 0 1rem;
   text-align: center;
+  background: transparent;
 }
 
 /* the two side-by-side items */
@@ -1291,3 +1363,354 @@ font-size: 0.85rem;
   opacity: 1;
   transform: translateY(0);
 }
+
+/* -------------------------------------------------
+   METALLIC LIQUID ANIMATION
+   - subtle motion like luxury sites
+-------------------------------------------------- */
+@keyframes luxuryGlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+body {
+  animation: luxuryGlow 16s ease-in-out infinite alternate;
+}
+
+/* -------------------------------------------------
+   LIGHT STREAKS BEHIND CONTENT
+-------------------------------------------------- */
+
+.light-streak {
+  position: fixed;
+  top: 0;
+  left: -200px;
+  width: 350px;
+  height: 100vh;
+  background: linear-gradient(100deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.9) 50%,
+      rgba(255,255,255,0) 100%);
+  filter: blur(20px);
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: -1;
+  transform: rotate(15deg);
+  animation: streakMove 8s linear infinite;
+}
+
+/* gold layer version */
+.light-streak.gold {
+  background: linear-gradient(100deg,
+      rgba(255,255,255,0) 0%,
+      rgba(212, 175, 55, 0.5) 50%,
+      rgba(255,255,255,0) 100%);
+  opacity: .3;
+}
+
+/* animation */
+@keyframes streakMove {
+  0%   { transform: translateX(-40%) rotate(15deg); }
+  100% { transform: translateX(140%) rotate(15deg); }
+}
+
+/* -------------------------------------------------
+   GLOBAL CARD UPGRADE
+   - Premium luxury card styling
+   - applies to all your card classes
+-------------------------------------------------- */
+.collection-card,
+.service-card,
+.about-card {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.07);
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease,
+    border-color 0.35s ease;
+  padding: 2rem 1.6rem;
+}
+
+/* gentle hover lift, not harsh */
+.collection-card:hover,
+.service-card:hover,
+.about-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+  border-color: var(--gold);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+/* smoother rounded images that match card curvature */
+.collection-img,
+.service-img,
+.about-img {
+  border-radius: 14px;
+}
+
+.collections-grid {
+  gap: 2rem;
+}
+
+.collection-name,
+.service-card h3,
+.about-card h3 {
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.collection-text,
+.service-card p,
+.about-card p {
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.collection-card:hover::after,
+.service-card:hover::after,
+.about-card:hover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+  pointer-events: none;
+}
+
+/* -------------------------------------------------
+   GOLD PREMIUM BOX (We Buy Gold)
+   - restores original gradient + shine
+   - overrides global card glass styling
+-------------------------------------------------- */
+.service-card.service-gold-highlight {
+  /* layout + positioning */
+  position: relative;
+  overflow: hidden;
+  padding: 2.2rem 1.8rem;   /* keep it larger than other cards */
+
+  /* original rich gold gradient */
+  background: linear-gradient(
+    135deg,
+    #d4af37,
+    #f5e27f,
+    #d4af37
+  );
+  border: 2px solid var(--gold);
+  backdrop-filter: none;    /* no glass blur here */
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+  color: #2b2b2b;
+}
+
+/* keep the SAME gradient on hover: only motion + shadow change */
+.service-card.service-gold-highlight:hover {
+  background: linear-gradient(
+    135deg,
+    #d4af37,
+    #f5e27f,
+    #d4af37
+  );
+  transform: translateY(-8px);
+  border-color: var(--gold);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+}
+
+/* restore text zoom behavior */
+.service-card.service-gold-highlight h3,
+.service-card.service-gold-highlight p {
+  transition: transform 0.3s ease;
+}
+
+.service-card.service-gold-highlight:hover h3,
+.service-card.service-gold-highlight:hover p {
+  transform: scale(1.06);
+}
+
+/* restore shine sweep overlay */
+.service-card.service-gold-highlight::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+
+/* shine moves across on hover */
+.service-card.service-gold-highlight:hover::after {
+  left: 150%;
+}
+
+/* ======================================
+   HERO UPGRADE (DESKTOP)
+   Larger, more premium display
+====================================== */
+
+@media (min-width: 769px) {
+  .hero {
+    padding-top: 2rem;
+  }
+
+  .hero-slider {
+    max-width: 1400px;    /* wider */
+    height: 420px;        /* taller */
+    border-radius: 20px;  /* smoother */
+  }
+
+  .hero-overlay {
+    padding: 2rem 3rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.15rem;
+    max-width: 600px;
+  }
+
+  .hero-arrow {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ==========================================
+   TIGHTEN INNER SECTION SPACING
+   (The real cause of the large gaps)
+========================================== */
+
+/* tighten headings */
+.collections-heading,
+.services-heading,
+.about-heading,
+.contact-heading {
+  margin-top: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* tighten space below the grids */
+.collections-grid {
+  margin-bottom: 1rem !important;
+}
+
+/* tighten spacing between section content */
+.services,
+.about-section,
+.contact-section {
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* reduce padding inside these footers */
+.collections-footer,
+.services-footer,
+.about-footer {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* remove extra margin being added by reveal animation offsets */
+.reveal-on-scroll {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* ==========================================
+   FIX ANCHOR SCROLL OFFSET FOR HEADERS
+   prevents navbar from cutting off section titles
+========================================== */
+html {
+  scroll-padding-top: 110px; /* tweak this if needed */
+}
+
+/* ==========================================
+   FIX SECTION TITLE OVERLAP
+   ensures headings never collide with content
+========================================== */
+
+.collections-heading,
+.services-heading,
+.about-heading,
+.contact-heading {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+/* --------------------------------------
+   DESKTOP FIXES
+   -------------------------------------- */
+@media (min-width: 769px) {
+  .top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* ensures vertical centering */
+  }
+
+  /* Increase logo size */
+  .top-header .site-logo img,
+  .top-header .logo img {
+    height: 70px;          /* adjust as needed */
+  }
+
+  /* If logo is text instead of an image */
+  .top-header .site-logo,
+  .top-header .logo {
+    font-size: 2.2rem;     /* safely increases desktop logo text */
+    line-height: 1;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .top-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    background: var(--light-gray);
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 1.8rem;
+  }
+
+  /* LOGO centered */
+  .header-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-80%);
+    text-align: center;
+  }
+
+  .logo-img {
+    height: 55px;
+  }
+
+  /* ADDRESS to the right */
+  .header-address {
+  margin-left: auto;
+  margin-right: 0;             /* remove small right margin */
+  padding-left: 10rem;         /* push it further right */
+  position: relative;
+}
+}
+
