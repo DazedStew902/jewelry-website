@@ -42,6 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const heroPrev = document.getElementById("heroPrev");
   const heroNext = document.getElementById("heroNext");
   const heroDotsContainer = document.getElementById("heroDots");
+  const popup = document.getElementById("holiday-popup");
+  const close = document.getElementById("popup-close");
 
   let heroCurrentIndex = 0;
   let heroDots = [];
@@ -89,6 +91,14 @@ document.addEventListener("DOMContentLoaded", () => {
       heroNext.addEventListener("click", () =>
         heroGoToSlide(heroCurrentIndex + 1)
       );
+
+    // Show popup every time page loads
+    popup.classList.add("show");
+
+     close.addEventListener("click", () => {
+     popup.classList.remove("show");
+     localStorage.setItem("holiday-popup-seen", "true");
+  });
     }
 
     // Swipe
