@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ross and Company Jewelers</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header class="top-header">
+      <button class="hamburger" id="hamburgerBtn">
+        <!-- 3-line hamburger icon -->
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <a href="tel:+17168227677" class="header-phone">+1 (716) 822 7677</a>
+
+      <div class="header-logo">
+        <img
+          src="my-website/images/Logo.png"
+          alt="Ross and Company Jewelers"
+          class="logo-img"
+        />
+      </div>
+
+      <div class="header-address">3510 McKinley Pkwy</div>
+    </header>
+
+    <!-- NAVIGATION BAR (Desktop + Mobile Drawer) -->
+    <nav class="nav-bar">
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#collections">Collections</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- MOBILE SIDE NAV (slides from left) -->
+    <nav class="mobile-nav" id="mobileNav">
+      <!-- Sidebar Logo -->
+      <div class="mobile-nav-logo">
+        <img src="my-website/images/Logo.png" alt="Ross and Company Jewelers" />
+      </div>
+
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#collections">Collections</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <button class="close-nav" id="closeNavBtn">×</button>
+      </ul>
+    </nav>
+    <!-- HERO SECTION / SLIDER -->
+    <!-- HERO SECTION / IMAGE SLIDER -->
+    <section class="hero" id="home">
+      <div class="hero-slider" id="heroSlider">
+        <!-- Slide 1: Store -->
+        <div class="hero-slide hero-slide--store is-active">
+          <div class="hero-overlay">
+            <h2 class="hero-title">Ross and Company Jewelers</h2>
+            <p class="hero-subtitle">
+              Visit our showroom for timeless pieces and personalized service.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 2: Engagement -->
+        <div class="hero-slide hero-slide--engagement">
+          <div class="hero-overlay">
+            <h2 class="hero-title">Engagement & Bridal</h2>
+            <p class="hero-subtitle">
+              Explore classic solitaires, halos, and custom designs for your
+              proposal.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 3: Inventory -->
+        <div class="hero-slide hero-slide--inventory">
+          <div class="hero-overlay">
+            <h2 class="hero-title">Fine Jewelry Collection</h2>
+            <p class="hero-subtitle">
+              Curated diamonds, gemstones, and gold for every occasion.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 4: Repairs -->
+        <div class="hero-slide hero-slide--repairs">
+          <div class="hero-overlay">
+            <h2 class="hero-title">Repairs & Restoration</h2>
+            <p class="hero-subtitle">
+              Ring sizing, prong work, cleaning, and restoration you can trust.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 5: Custom -->
+        <div class="hero-slide hero-slide--custom">
+          <div class="hero-overlay">
+            <h2 class="hero-title">Custom Jewelry Design</h2>
+            <p class="hero-subtitle">
+              Bring your ideas and let us create a one-of-a-kind piece.
+            </p>
+          </div>
+        </div>
+
+        <!-- Arrows (desktop) -->
+        <button
+          class="hero-arrow hero-arrow--prev"
+          id="heroPrev"
+          aria-label="Previous slide"
+        >
+          &#10094;
+        </button>
+        <button
+          class="hero-arrow hero-arrow--next"
+          id="heroNext"
+          aria-label="Next slide"
+        >
+          &#10095;
+        </button>
+      </div>
+      <!-- Centered dots underneath hero -->
+      <div class="hero-dots" id="heroDots"></div>
+    </section>
+    <!-- PROMO STRIP: Shop the Best for Less -->
+    <section class="shop-promo" id="shop-promo">
+      <div class="shop-promo-inner">
+        <h2 class="shop-promo-title">
+          Shop the <span class="emphasis-best">Best</span> for
+          <span class="emphasis-less">Less</span>
+        </h2>
+        <p class="shop-promo-text">
+          Discover the highest quality jewelry at affordable prices—engagement
+          rings, fine jewelry, custom pieces, and more, all crafted elegantly to
+          stand out without stretching your budget.
+        </p>
+        <button class="shop-promo-button">View Collections</button>
+      </div>
+    </section>
+    <section>
+        <h2 class="collections-heading reveal-on-scroll">Our In-Store Collections:</h2>
+
+<section class="collections" id="collections">
+    <div class="collections-grid">
+      <article class="collection-card reveal-on-scroll">
+        <img
+          src="my-website/images/engagement2.jpg"
+          alt="Engagement2"
+          class="collection-img"
+        />
+        <h3 class="collection-name">Engagement</h3>
+        <p class="collection-text">
+          Explore a selection of our best engagement rings.
+        </p>
+      </article>
+
+      <article class="collection-card reveal-on-scroll">
+        <img
+          src="my-website/images/earrings.jpg"
+          alt="Earrings"
+          class="collection-img"
+        />
+        <h3 class="collection-name">Earrings</h3>
+        <p class="collection-text">
+          Diamond studs, hoops, and gemstone designs.
+        </p>
+      </article>
+
+      <article class="collection-card reveal-on-scroll">
+        <img
+          src="my-website/images/necklaces.jpg"
+          alt="Necklaces"
+          class="collection-img"
+        />
+        <h3 class="collection-name">Necklaces</h3>
+        <p class="collection-text">
+          Elegant pendants, chains, and timeless styles.
+        </p>
+      </article>
+
+      <article class="collection-card reveal-on-scroll">
+        <img
+          src="my-website/images/bracelets.jpg"
+          alt="Bracelets"
+          class="collection-img"
+        />
+        <h3 class="collection-name">Bracelets</h3>
+        <p class="collection-text">
+          Tennis bracelets, bangles, and other luxury.
+        </p>
+      </article>
+
+      <article class="collection-card reveal-on-scroll">
+        <img
+          src="my-website/images/rings.jpg"
+          alt="Rings"
+          class="collection-img"
+        />
+        <h3 class="collection-name">Rings</h3>
+        <p class="collection-text">
+          Diamond, gold, and gemstone rings for any occasion.
+        </p>
+      </article>
+
+      <article class="collection-card reveal-on-scroll">
+        <img
+          src="my-website/images/fashion.jpg"
+          alt="Fashion"
+          class="collection-img"
+        />
+        <h3 class="collection-name">Fashion</h3>
+        <p class="collection-text">
+          Contemporary looks designed for modern style.
+        </p>
+      </article>
+
+      <article class="collection-card reveal-on-scroll">
+        <img
+          src="my-website/images/chains.jpg"
+          alt="Chains"
+          class="collection-img"
+        />
+        <h3 class="collection-name">Chains</h3>
+        <p class="collection-text">
+          Classic chains in gold, sterling silver, and more.
+        </p>
+      </article>
+
+      <article class="collection-card reveal-on-scroll">
+        <img
+          src="my-website/images/watches.jpg"
+          alt="Watches"
+          class="collection-img"
+        />
+        <h3 class="collection-name">Watches</h3>
+        <p class="collection-text">
+          Classic, modern, and luxury timepieces for every style.
+        </p>
+      </article>
+    </div>
+    <div class="collections-footer reveal-on-scroll">
+  <p>
+    Come visit us at 3510 McKinley Parkway to view our full inventory, including current
+    and upcoming stock. Whatever it is you are looking for, rest assured we can
+    take care of you.
+  </p>
+</div>
+</section>
+<h2 class="services-heading reveal-on-scroll">Our Services</h2>
+<section class="services" id="services">
+
+  <div class="service-card reveal-on-scroll">
+    <img src="my-website/images/service1.jpg" alt="Watch Battery Service" class="service-img">
+    <h3>Watch Battery Replacement</h3>
+    <p>$7 – $12 depending on model and seal requirements.</p>
+  </div>
+
+  <div class="service-card reveal-on-scroll">
+    <img src="my-website/images/service1.jpg" alt="Watch Battery Service" class="service-img">
+    <h3>Watch Repair</h3>
+    <p>Movement servicing, crystal replacement, crown repairs and more.</p>
+  </div>
+
+  <div class="service-card reveal-on-scroll">
+    <img src="my-website/images/service1.jpg" alt="Watch Battery Service" class="service-img">
+    <h3>General Jewelry Repair</h3>
+    <p>Ring sizing, cleaning, polishing, stone setting and restoration.</p>
+  </div>
+
+  <div class="service-card reveal-on-scroll">
+    <img src="my-website/images/service1.jpg" alt="Watch Battery Service" class="service-img">
+    <h3>Custom Jewelry Creation</h3>
+    <p>Work with our jewelers to design and build a one-of-a-kind piece.</p>
+  </div>
+
+  <div class="service-card service-gold-highlight reveal-on-scroll">
+  <h3>We Buy Gold</h3>
+  <p>Bring in your unwanted or broken jewelry — we pay fair market value.</p>
+  <p class="gold-price-link">
+    <a href="https://goldprice.org/spot-gold.html" target="_blank" rel="noopener noreferrer">
+      View current gold price
+    </a>
+  </p>
+</div>
+<div class="services-footer reveal-on-scroll">
+  <p>
+    We have been serving Buffalo for decades, with thousands of satisfied customers.
+    As a family owned business, all services are personalized to exactly what you need,
+    with a quick turnaround time and precise quoting.
+  </p>
+</div>
+</section>
+<h2 class="about-heading reveal-on-scroll">About Us</h2>
+<section class="about-section reveal-on-scroll is-visable" id="about">
+
+  <div class="about-card reveal-on-scroll">
+    <img src="my-website/images/about1.jpg" alt="Customers" class="about-img">
+    <h3>We Value Our Customers</h3>
+    <p>
+      Every guest who walks through our doors receives personal attention and expert care.
+      We treat every jewelry request with honesty, precision, and a genuine commitment to satisfaction.
+    </p>
+  </div>
+
+  <div class="about-card reveal-on-scroll">
+    <img src="my-website/images/about2.jpg" alt="Bench Jeweler" class="about-img">
+    <h3>Meet the Bench</h3>
+    <p>
+      Our in-house jewelers have decades of experience in craftsmanship, stone setting, and restoration.
+      We handle every repair, sizing, and custom creation with exceptional detail and pride.
+    </p>
+  </div>
+  <div class="about-footer reveal-on-scroll">
+  <p>
+    Come visit at 3510 McKinley Parkway to meet with us and learn more about our values. 
+    Our story spans decades of jewelry expertise, craftsmanship, and a commitment to serving Buffalo.
+  </p>
+</div>
+</section>
+<h2 class="contact-heading reveal-on-scroll">Contact Us</h2>
+<section class="contact-section" id="contact">
+  
+  <div class="contact-row">
+    <div class="contact-item reveal-on-scroll">
+      <img src="my-website/images/phone.png" alt="Phone" class="contact-icon">
+      <a href="tel:+17168227677" class="contact-link">+1 (716) 822 7677</a>
+    </div>
+
+    <div class="contact-item reveal-on-scroll">
+      <img src="my-website/images/email.png" alt="Email" class="contact-icon">
+      <a href="mailto:info@rossandcompany.com" class="contact-link">info@rossandcompany.com</a>
+    </div>
+  </div>
+
+  <div class="contact-center-item reveal-on-scroll">
+    <img src="my-website/images/location.png" alt="Address" class="contact-icon">
+    <a 
+      href="https://www.google.com/maps?q=3510+McKinley+Pkwy"
+      target="_blank"
+      class="contact-link"
+    >
+      3510 McKinley Pkwy
+    </a>
+  </div>
+
+</section>
+    <script src="script.js"></script>
+  </body>
+</html>
