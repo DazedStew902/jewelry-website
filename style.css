@@ -1787,3 +1787,72 @@ html {
     opacity: 1;
   }
 }
+
+/* Snow animation container */
+.snowflakes {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 999998;
+}
+
+.snowflake {
+  position: absolute;
+  top: -10px;
+  font-size: 1.2rem;
+  color: white;
+  opacity: 0.9;
+  animation: fall linear infinite;
+}
+
+/* Random horizontal starting positions */
+.snowflake:nth-child(1) { left: 5%; animation-duration: 8s; }
+.snowflake:nth-child(2) { left: 15%; animation-duration: 10s; }
+.snowflake:nth-child(3) { left: 25%; animation-duration: 12s; }
+.snowflake:nth-child(4) { left: 40%; animation-duration: 9s; }
+.snowflake:nth-child(5) { left: 55%; animation-duration: 11s; }
+.snowflake:nth-child(6) { left: 70%; animation-duration: 7s; }
+.snowflake:nth-child(7) { left: 85%; animation-duration: 8s; }
+.snowflake:nth-child(8) { left: 95%; animation-duration: 13s; }
+
+/* The falling animation */
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+  }
+}
+
+.snowflake:nth-child(odd) {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.snowflake:nth-child(even) {
+  font-size: 1.4rem;
+  opacity: 1;
+}
+/* To hide snowflakes upon closing popup */
+#snowflakes {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#snowflakes.show {
+  opacity: 1;
+}
+.site-footer {
+  text-align: center;
+  padding: 1.2rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--dark-gray);
+  background: var(--light-gray);
+  border-top: 2px solid var(--gold);
+}

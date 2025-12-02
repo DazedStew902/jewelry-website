@@ -36,117 +36,143 @@ closeBtn.addEventListener("click", () => {
    HERO SLIDER + PAGE INIT
 ---------------------------------------- */
 
+/* ---------------------------------------
+   HERO SLIDER + POPUP + SMOOTH SCROLL
+---------------------------------------- */
+
 document.addEventListener("DOMContentLoaded", () => {
+
+  /* ==========================
+     POPUP + SNOW FIRST
+  =========================== */
+  const popup = document.getElementById("holiday-popup");
+  const close = document.getElementById("popup-close");
+  const snow = document.getElementById("snowflakes");
+
+  if (popup && close) {
+    popup.classList.add("show");
+    if (snow) snow.classList.add("show");
+
+    close.addEventListener("click", () => {
+      popup.classList.remove("show");
+      if (snow) snow.classList.remove("show");
+    });
+  }
+
+  /* ==========================
+     HERO SLIDER
+  =========================== */
   const heroSlider = document.getElementById("heroSlider");
   const heroSlides = [...document.querySelectorAll(".hero-slide")];
   const heroPrev = document.getElementById("heroPrev");
   const heroNext = document.getElementById("heroNext");
   const heroDotsContainer = document.getElementById("heroDots");
-  const popup = document.getElementById("holiday-popup");
-  const close = document.getElementById("popup-close");
 
   let heroCurrentIndex = 0;
+  let heroTimer;
   let heroDots = [];
 
-  if (heroSlider && heroSlides.length > 0 && heroDotsContainer) {
+  if (heroSlider && heroSlides.length > 0) {
+
     // Create dots
     heroSlides.forEach((_, index) => {
       const dot = document.createElement("button");
       dot.classList.add("hero-dot");
       if (index === 0) dot.classList.add("is-active");
-      dot.setAttribute("aria-label", `Go to slide ${index + 1}`);
-      dot.addEventListener("click", () => heroGoToSlide(index));
+      dot.addEventListener("click", () => {
+        go(index);
+        restart();
+      });
       heroDotsContainer.appendChild(dot);
     });
 
     heroDots = [...document.querySelectorAll(".hero-dot")];
 
-    function heroGoToSlide(index) {
+    function go(index) {
       if (index < 0) index = heroSlides.length - 1;
       if (index >= heroSlides.length) index = 0;
 
       heroCurrentIndex = index;
 
-      // activate the slide
-      heroSlides.forEach((slide, i) => {
-        slide.classList.toggle("is-active", i === index);
-      });
+      heroSlides.forEach((s, i) =>
+        s.classList.toggle("is-active", i === index)
+      );
 
-      // activate the correct dot / progress bar
-      heroDots.forEach((dot, i) => {
-        dot.classList.toggle("is-active", i === index);
-      });
+      heroDots.forEach((d, i) =>
+        d.classList.toggle("is-active", i === index)
+      );
     }
 
-    // 🔁 AUTO-ADVANCE: now everything is defined
-    setInterval(() => {
-      heroGoToSlide(heroCurrentIndex + 1);
-    }, 5000);
+    function start() {
+      heroTimer = setInterval(() => {
+        go(heroCurrentIndex + 1);
+      }, 5000);
+    }
 
-    // Arrows
+    function restart() {
+      clearInterval(heroTimer);
+      start();
+    }
+
+    start();
+
+    /* Arrows */
     if (heroPrev && heroNext) {
-      heroPrev.addEventListener("click", () =>
-        heroGoToSlide(heroCurrentIndex - 1)
-      );
-      heroNext.addEventListener("click", () =>
-        heroGoToSlide(heroCurrentIndex + 1)
-      );
+      heroPrev.addEventListener("click", () => {
+        go(heroCurrentIndex - 1);
+        restart();
+      });
 
-    // Show popup every time page loads
-    popup.classList.add("show");
-
-     close.addEventListener("click", () => {
-     popup.classList.remove("show");
-     localStorage.setItem("holiday-popup-seen", "true");
-  });
+      heroNext.addEventListener("click", () => {
+        go(heroCurrentIndex + 1);
+        restart();
+      });
     }
 
-    // Swipe
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const swipeThreshold = 50;
+    /* Swipe */
+    let x0 = 0;
+    heroSlider.addEventListener("touchstart", e => x0 = e.touches[0].clientX);
 
-    heroSlider.addEventListener("touchstart", (e) => {
-      touchStartX = e.changedTouches[0].clientX;
+    heroSlider.addEventListener("touchend", e => {
+      const x1 = e.changedTouches[0].clientX;
+      const dx = x1 - x0;
+
+      if (dx > 60) { go(heroCurrentIndex - 1); restart(); }
+      if (dx < -60) { go(heroCurrentIndex + 1); restart(); }
     });
 
-    heroSlider.addEventListener("touchend", (e) => {
-      touchEndX = e.changedTouches[0].clientX;
-      const deltaX = touchEndX - touchStartX;
-
-      if (deltaX < -swipeThreshold) heroGoToSlide(heroCurrentIndex + 1);
-      if (deltaX > swipeThreshold) heroGoToSlide(heroCurrentIndex - 1);
-    });
+    /* Hover Pause */
+    heroSlider.addEventListener("mouseenter", () => clearInterval(heroTimer));
+    heroSlider.addEventListener("mouseleave", start);
   }
 
-  // Scroll to Collections (works only after DOM load)
+  /* ==========================
+     Smooth scroll to collections
+  =========================== */
   const promoButton = document.querySelector(".shop-promo-button");
   if (promoButton) {
     promoButton.addEventListener("click", () => {
-      document.querySelector("#collections").scrollIntoView({
+      document.querySelector("#collections")?.scrollIntoView({
         behavior: "smooth"
       });
     });
   }
 
-  /* ---------------------------------------
-     SMOOTH SCROLL FOR NAV + MOBILE MENU
-  ---------------------------------------- */
-
+  /* ==========================
+     NAV SMOOTH SCROLL
+  =========================== */
   document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener("click", function (e) {
+    link.addEventListener("click", e => {
       e.preventDefault();
-      const target = document.querySelector(this.getAttribute("href"));
-      if (!target) return;
-
-      target.scrollIntoView({ behavior: "smooth" });
-
-      if (mobileNav.classList.contains("open")) {
-        mobileNav.classList.remove("open");
-      }
+      document.querySelector(link.getAttribute("href"))?.scrollIntoView({
+        behavior: "smooth"
+      });
+      mobileNav.classList.remove("open");
     });
   });
-}); // END of DOMContentLoaded
+
+}); // END DOMContentLoaded
+
 
 
 /* ---------------------------------------
@@ -222,15 +248,24 @@ function adjustHeroOffset() {
 adjustHeroOffset();
 window.addEventListener("resize", adjustHeroOffset);
 
-/* -------------------------------------------------
-   PARALLAX LIGHT MOTION ON SCROLL
--------------------------------------------------- */
-window.addEventListener("scroll", () => {
+const streaks = document.querySelectorAll(".light-streak");
+let ticking = false;
+
+function handleScroll() {
   const y = window.scrollY;
 
   document.body.style.backgroundPositionY = -(y * 0.07) + "px";
 
-  document.querySelectorAll(".light-streak").forEach((el, i) => {
+  streaks.forEach((el, i) => {
     el.style.transform = `translateX(${y * (0.05 + i*0.03)}px) rotate(15deg)`;
   });
+
+  ticking = false;
+}
+
+window.addEventListener("scroll", () => {
+  if (!ticking) {
+    requestAnimationFrame(handleScroll);
+    ticking = true;
+  }
 });
