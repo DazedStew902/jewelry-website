@@ -1847,6 +1847,18 @@ html {
 #snowflakes.show {
   opacity: 1;
 }
+
+#snowflakes {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999 !important;
+  pointer-events: none;
+  transform: none !important;
+}
+
 .site-footer {
   text-align: center;
   padding: 1.2rem 0;
