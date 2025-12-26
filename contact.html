@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BarOrPub",
+        "name": "El 32",
+        "url": "https://el-32.com/",
+        "image": "https://el-32.com/assets/images/landing-desktop.jpg",
+        "telephone": "+1-434-209-5900",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "1118 Main St",
+          "addressLocality": "Lynchburg",
+          "addressRegion": "VA",
+          "postalCode": "24504",
+          "addressCountry": "US"
+        },
+        "sameAs": ["https://www.instagram.com/el32.lyh/"],
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Wednesday",
+            "opens": "20:00",
+            "closes": "02:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Thursday",
+            "opens": "20:00",
+            "closes": "02:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Friday",
+            "opens": "20:00",
+            "closes": "02:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Saturday",
+            "opens": "20:00",
+            "closes": "02:00"
+          }
+        ]
+      }
+    </script>
+
+    <!-- =========================================================
+         El 32 — Contact Page
+         Purpose:
+         - Inner page with logo-only header (consistent)
+         - Contact form (static-site friendly)
+         Notes:
+         - Uses Web3Forms endpoint (no backend needed)
+    ========================================================== -->
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Contact — El 32</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Accent font used on landing; kept for consistency -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://web3forms.com/client/script.js" async defer></script>
+
+    <meta
+      name="description"
+      content="Contact El 32 in downtown Lynchburg, VA. Bookings and event inquiries — message us, email inquiries@el-32.com, or call (434) 209-5900."
+    />
+    <link rel="canonical" href="https://el-32.com/contact.html" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#000000" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="El 32" />
+    <meta
+      property="og:title"
+      content="Contact El 32 | Downtown Lynchburg, VA"
+    />
+    <meta
+      property="og:description"
+      content="Bookings and event inquiries — message us, email inquiries@el-32.com, or call (434) 209-5900."
+    />
+    <meta property="og:url" content="https://el-32.com/contact.html" />
+    <meta
+      property="og:image"
+      content="https://el-32.com/assets/images/landing-desktop.jpg"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Contact El 32 | Downtown Lynchburg, VA"
+    />
+    <meta
+      name="twitter:description"
+      content="Bookings and event inquiries — message, email, or call."
+    />
+    <meta
+      name="twitter:image"
+      content="https://el-32.com/assets/images/landing-desktop.jpg"
+    />
+
+    <!-- LocalBusiness / Bar structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BarOrPub",
+        "name": "El 32",
+        "url": "https://el-32.com/",
+        "image": "https://el-32.com/assets/images/landing-desktop.jpg",
+        "telephone": "+1-434-209-5900",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "1118 Main St",
+          "addressLocality": "Lynchburg",
+          "addressRegion": "VA",
+          "postalCode": "24504",
+          "addressCountry": "US"
+        },
+        "sameAs": ["https://www.instagram.com/el32.lyh/"]
+      }
+    </script>
+  </head>
+
+  <body>
+    <main class="page page--contact" aria-label="Contact El 32">
+      <!-- Liquid filter defs (for lightfield distortion) -->
+      <svg class="fx" width="0" height="0" aria-hidden="true" focusable="false">
+        <filter id="el32-liquid">
+          <feTurbulence
+            id="el32-turbulence"
+            type="fractalNoise"
+            baseFrequency="0.012 0.018"
+            numOctaves="2"
+            seed="2"
+            stitchTiles="stitch"
+            result="noise"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="noise"
+            scale="28"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+      </svg>
+
+      <!-- Animated color veil (fixed ambience) -->
+      <div class="page__veil" aria-hidden="true"></div>
+
+      <!-- Ambient Light Field (fixed ambience) -->
+      <div class="lightfield" aria-hidden="true"></div>
+
+      <!-- Scrollable content -->
+      <div class="page__scroll">
+        <header class="page__header" role="banner">
+          <a class="page__logo-link" href="index" aria-label="Back to home">
+            <img
+              class="page__logo"
+              src="assets/images/el32-logo.svg"
+              alt="El 32"
+              decoding="async"
+            />
+          </a>
+          <p class="page__logo-hint" aria-hidden="true">
+            Tap logo to return home
+          </p>
+        </header>
+
+        <section class="page__content" aria-label="Contact form">
+          <h1 class="page__title" data-reveal>Contact</h1>
+
+          <!-- Success message (shows after redirect back with ?sent=1) -->
+          <p
+            class="form-note form-note--success"
+            role="status"
+            hidden
+            data-form-success
+          >
+            Message sent. We’ll get back to you soon.
+          </p>
+
+          <p class="form-note" data-reveal>
+            Questions, bookings, or event inquiries — send us a message.
+          </p>
+
+          <form
+            class="contact-form"
+            action="https://api.web3forms.com/submit"
+            method="POST"
+            data-reveal
+          >
+            <input
+              type="hidden"
+              name="access_key"
+              value="51130799-9aaf-4dc0-9486-a20014d8f0fd"
+            />
+
+            <!-- Optional but helpful -->
+            <input
+              type="hidden"
+              name="subject"
+              value="New message from el-32.com"
+            />
+            <input type="hidden" name="from_name" value="El 32 Website" />
+
+            <!-- Redirect back to this page with a flag -->
+            <input
+              type="hidden"
+              name="redirect"
+              value="https://el-32.com/contact.html?sent=1"
+            />
+
+            <!-- Anti-spam honeypot (leave hidden) -->
+            <input
+              class="hp-field"
+              type="text"
+              name="website"
+              tabindex="-1"
+              autocomplete="off"
+            />
+
+            <div class="form-grid">
+              <label class="field">
+                <span class="field__label">Name</span>
+                <input
+                  class="field__control"
+                  type="text"
+                  name="name"
+                  autocomplete="name"
+                  required
+                />
+              </label>
+
+              <label class="field">
+                <span class="field__label">Email</span>
+                <input
+                  class="field__control"
+                  type="email"
+                  name="email"
+                  autocomplete="email"
+                  required
+                />
+              </label>
+
+              <label class="field field--full">
+                <span class="field__label">¿Qué pasa?</span>
+                <textarea
+                  class="field__control field__control--textarea"
+                  name="message"
+                  rows="6"
+                  required
+                ></textarea>
+              </label>
+            </div>
+            <div class="h-captcha" data-captcha="true"></div>
+            <button class="form-btn" type="submit">Send Message</button>
+          </form>
+          <!-- =========================================================
+     QUICK LINKS (Instagram / Email / Phone)
+     - Type-first, non-boxy buttons
+     - Mobile: stacked
+     - Desktop: inline row
+========================================================== -->
+          <div class="contact-links" aria-label="Contact links" data-reveal>
+            <!-- Instagram -->
+            <a
+              class="contact-links__btn"
+              href="https://www.instagram.com/el32.lyh/"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="contact-links__icon" aria-hidden="true">
+                <!-- Instagram icon (simple) -->
+                <svg viewBox="0 0 24 24" class="contact-icon">
+                  <rect x="7" y="7" width="10" height="10" rx="3"></rect>
+                  <path d="M16.5 3.5h.01"></path>
+                  <path
+                    d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z"
+                  ></path>
+                </svg>
+              </span>
+              <span class="contact-links__text">Follow us on Instagram</span>
+            </a>
+
+            <!-- Email -->
+            <a class="contact-links__btn" href="mailto:inquiries@el-32.com">
+              <span class="contact-links__icon" aria-hidden="true">
+                <!-- Mail icon -->
+                <svg viewBox="0 0 24 24" class="contact-icon">
+                  <path d="M4 6h16v12H4z"></path>
+                  <path d="M4 7l8 6 8-6"></path>
+                </svg>
+              </span>
+              <span class="contact-links__text">Email inquiries@el-32.com</span>
+            </a>
+
+            <!-- Phone -->
+            <a class="contact-links__btn" href="tel:+14342095900">
+              <span class="contact-links__icon" aria-hidden="true">
+                <!-- Phone icon -->
+                <svg viewBox="0 0 24 24" class="contact-icon">
+                  <path
+                    d="M22 16.9v3a2 2 0 0 1-2.18 2
+             A19.8 19.8 0 0 1 3.1 5.18
+             A2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.72
+             c.12.9.32 1.77.6 2.6a2 2 0 0 1-.45 2.11L9.1 10.9
+             a16 16 0 0 0 4 4l1.47-1.15a2 2 0 0 1 2.11-.45
+             c.83.28 1.7.48 2.6.6A2 2 0 0 1 22 16.9Z"
+                  ></path>
+                </svg>
+              </span>
+              <span class="contact-links__text">Call El 32 @ 434 209 5900</span>
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="js/main.js"></script>
+
+    <!-- Tiny helper: show success message after redirect -->
+    <script>
+      (() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get("sent") === "1") {
+          const el = document.querySelector("[data-form-success]");
+          if (el) el.hidden = false;
+        }
+      })();
+    </script>
+    <!-- =========================================================
+     FOOTER (Global)
+========================================================== -->
+    <footer class="site-footer" role="contentinfo">
+      <p class="site-footer__text">
+        © 2025 El 32 Latino Bar | All Rights Reserved
+      </p>
+    </footer>
+  </body>
+</html>
