@@ -1,150 +1,314 @@
-/* ---------------------------------------
-   MOBILE NAVIGATION TOGGLE 
----------------------------------------- */
+/* =====================================================================
+   MOBILE NAV — Luxury Drawer Controller (Safari/Chrome Optimized)
+   Goals:
+   - Smooth open/close with overlay
+   - Close on backdrop tap, close button, Esc
+   - Lock background scroll while open (important for iOS Safari)
+===================================================================== */
 
-// Select hamburger button + mobile nav
-const hamburger = document.getElementById("hamburgerBtn");
-const mobileNav = document.getElementById("mobileNav");
+(() => {
+  "use strict";
 
-// When hamburger is clicked, toggle sliding menu
-hamburger.addEventListener("click", () => {
-  mobileNav.classList.toggle("open");
-});
+  const hamburger = document.getElementById("hamburgerBtn");
+  const mobileNav = document.getElementById("mobileNav");
+  const closeBtn = document.getElementById("closeNavBtn");
+  const backdrop = document.getElementById("mobileNavBackdrop");
 
-// When click outside hamburger, close the menu
-document.addEventListener("click", (e) => {
-  const clickedInside = mobileNav.contains(e.target) || hamburger.contains(e.target);
+  if (!hamburger || !mobileNav) return;
 
-  if (!clickedInside) {
-    mobileNav.classList.remove("open");
+  let isOpen = false;
+  let scrollY = 0;
+
+  function lockScroll() {
+    // iOS-safe scroll lock
+    scrollY = window.scrollY || 0;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
   }
-});
 
-const closeBtn = document.getElementById("closeNavBtn");
+  function unlockScroll() {
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    window.scrollTo(0, scrollY);
+  }
 
-closeBtn.addEventListener("click", () => {
-  mobileNav.classList.remove("open");
-});
+  function openMenu() {
+    if (isOpen) return;
+    isOpen = true;
 
+    mobileNav.classList.add("open");
 
-/* ---------------------------------------
-   HERO SLIDER
-   Wrapped in DOM ready
----------------------------------------- */
+    if (backdrop) {
+      backdrop.hidden = false;
+      // next tick so opacity transition always triggers
+      requestAnimationFrame(() => backdrop.classList.add("is-open"));
+    }
 
-/* ---------------------------------------
-   HERO SLIDER + PAGE INIT
----------------------------------------- */
+    hamburger.setAttribute("aria-expanded", "true");
+    lockScroll();
+  }
 
-/* ---------------------------------------
-   HERO SLIDER + POPUP + SMOOTH SCROLL
----------------------------------------- */
+  function closeMenu() {
+    if (!isOpen) return;
+    isOpen = false;
 
-document.addEventListener("DOMContentLoaded", () => {
+    mobileNav.classList.remove("open");
 
-  /* ==========================
-     POPUP + SNOW FIRST
-  =========================== */
-  const popup = document.getElementById("holiday-popup");
-  const close = document.getElementById("popup-close");
-  const snow = document.getElementById("snowflakes");
+    if (backdrop) {
+      backdrop.classList.remove("is-open");
+      // wait for fade-out before hiding to keep transition smooth
+      window.setTimeout(() => {
+        if (!isOpen) backdrop.hidden = true;
+      }, 240);
+    }
 
-  if (popup && close) {
-    popup.classList.add("show");
-    if (snow) snow.classList.add("show");
+    hamburger.setAttribute("aria-expanded", "false");
+    unlockScroll();
+  }
 
-    close.addEventListener("click", () => {
-      popup.classList.remove("show");
-      if (snow) snow.classList.remove("show");
+  function toggleMenu() {
+    if (isOpen) closeMenu();
+    else openMenu();
+  }
+
+  hamburger.addEventListener("click", (e) => {
+    e.preventDefault();
+    toggleMenu();
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeMenu();
     });
   }
 
+  if (backdrop) {
+    backdrop.addEventListener("click", () => closeMenu());
+  }
+
+  // Close on Esc
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
+
+// Mobile nav links: close menu FIRST (unlock scroll), then smooth-scroll to section
+mobileNav.addEventListener("click", (e) => {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+
+  const hash = link.getAttribute("href");
+  const target = hash ? document.querySelector(hash) : null;
+  if (!target) return;
+
+  e.preventDefault();
+
+  // Close/unlock first (important because body is position:fixed while open)
+  closeMenu();
+
+  // Next frame ensures scroll lock has been removed before scrolling
+  requestAnimationFrame(() => {
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
+})();
+
   /* ==========================
-     HERO SLIDER
+     HERO SLIDER (Optimized)
+     Goals:
+     - Keep visuals + features identical
+     - Prevent “black flash” / late-loading backgrounds
+     - Use drift-free RAF timer (smoother than setInterval)
+     - Avoid unnecessary DOM queries in loops
   =========================== */
-  const heroSlider = document.getElementById("heroSlider");
-  const heroSlides = [...document.querySelectorAll(".hero-slide")];
-  const heroPrev = document.getElementById("heroPrev");
-  const heroNext = document.getElementById("heroNext");
-  const heroDotsContainer = document.getElementById("heroDots");
+  (() => {
+    const heroSlider = document.getElementById("heroSlider");
+    const heroDotsContainer = document.getElementById("heroDots");
+    const heroSlides = Array.from(document.querySelectorAll(".hero-slide"));
+    const heroPrev = document.getElementById("heroPrev");
+    const heroNext = document.getElementById("heroNext");
 
-  let heroCurrentIndex = 0;
-  let heroTimer;
-  let heroDots = [];
+    if (!heroSlider || !heroDotsContainer || heroSlides.length === 0) return;
 
-  if (heroSlider && heroSlides.length > 0) {
+    // Extract CSS background-image URLs so we can preload them
+    const slideUrls = heroSlides
+      .map((slide) => {
+        const bg = getComputedStyle(slide).backgroundImage; // url("...")
+        const match = bg && bg !== "none" ? bg.match(/url\(["']?(.*?)["']?\)/i) : null;
+        return match?.[1] ?? null;
+      })
+      .filter(Boolean);
 
-    // Create dots
-    heroSlides.forEach((_, index) => {
+    let currentIndex = heroSlides.findIndex((s) => s.classList.contains("is-active"));
+    if (currentIndex < 0) currentIndex = 0;
+
+    // ----- Dots (created once) -----
+    const dots = heroSlides.map((_, index) => {
       const dot = document.createElement("button");
-      dot.classList.add("hero-dot");
-      if (index === 0) dot.classList.add("is-active");
+      dot.type = "button";
+      dot.className = "hero-dot";
+      dot.setAttribute("aria-label", `Go to slide ${index + 1}`);
       dot.addEventListener("click", () => {
         go(index);
-        restart();
+        restartClock();
       });
       heroDotsContainer.appendChild(dot);
+      return dot;
     });
 
-    heroDots = [...document.querySelectorAll(".hero-dot")];
+    // Ensure initial dot state matches initial active slide
+    dots.forEach((d, i) => d.classList.toggle("is-active", i === currentIndex));
 
-    function go(index) {
-      if (index < 0) index = heroSlides.length - 1;
-      if (index >= heroSlides.length) index = 0;
+    // ----- State -----
+    const SLIDE_INTERVAL_MS = 5000;
+    let paused = false;
+    let rafId = 0;
+    let lastTick = 0;
 
-      heroCurrentIndex = index;
-
-      heroSlides.forEach((s, i) =>
-        s.classList.toggle("is-active", i === index)
-      );
-
-      heroDots.forEach((d, i) =>
-        d.classList.toggle("is-active", i === index)
-      );
+    // ----- Helpers -----
+    function clampIndex(i) {
+      if (i < 0) return heroSlides.length - 1;
+      if (i >= heroSlides.length) return 0;
+      return i;
     }
 
-    function start() {
-      heroTimer = setInterval(() => {
-        go(heroCurrentIndex + 1);
-      }, 5000);
+    function go(nextIndex) {
+      const index = clampIndex(nextIndex);
+      if (index === currentIndex) return;
+
+      currentIndex = index;
+
+      // Toggle classes only (no layout reads)
+      heroSlides.forEach((slide, i) => {
+        slide.classList.toggle("is-active", i === currentIndex);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("is-active", i === currentIndex);
+      });
     }
 
-    function restart() {
-      clearInterval(heroTimer);
-      start();
+    // Drift-free clock using RAF + performance.now()
+    function tick(now) {
+      if (!paused) {
+        if (!lastTick) lastTick = now;
+
+        const elapsed = now - lastTick;
+        if (elapsed >= SLIDE_INTERVAL_MS) {
+          // Advance exactly one slide and carry remainder time forward
+          lastTick = now - (elapsed % SLIDE_INTERVAL_MS);
+          go(currentIndex + 1);
+        }
+      }
+
+      rafId = window.requestAnimationFrame(tick);
     }
 
-    start();
+    function startClock() {
+      stopClock();
+      lastTick = performance.now();
+      rafId = window.requestAnimationFrame(tick);
+    }
 
-    /* Arrows */
-    if (heroPrev && heroNext) {
+    function stopClock() {
+      if (rafId) window.cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+
+    function restartClock() {
+      lastTick = performance.now();
+    }
+
+    // ----- Controls (Arrows) -----
+    if (heroPrev) {
       heroPrev.addEventListener("click", () => {
-        go(heroCurrentIndex - 1);
-        restart();
-      });
-
-      heroNext.addEventListener("click", () => {
-        go(heroCurrentIndex + 1);
-        restart();
+        go(currentIndex - 1);
+        restartClock();
       });
     }
 
-    /* Swipe */
+    if (heroNext) {
+      heroNext.addEventListener("click", () => {
+        go(currentIndex + 1);
+        restartClock();
+      });
+    }
+
+    // ----- Swipe (touch) -----
     let x0 = 0;
-    heroSlider.addEventListener("touchstart", e => x0 = e.touches[0].clientX);
 
-    heroSlider.addEventListener("touchend", e => {
-      const x1 = e.changedTouches[0].clientX;
-      const dx = x1 - x0;
+    heroSlider.addEventListener(
+      "touchstart",
+      (e) => {
+        x0 = e.touches?.[0]?.clientX ?? 0;
+      },
+      { passive: true }
+    );
 
-      if (dx > 60) { go(heroCurrentIndex - 1); restart(); }
-      if (dx < -60) { go(heroCurrentIndex + 1); restart(); }
+    heroSlider.addEventListener(
+      "touchend",
+      (e) => {
+        const x1 = e.changedTouches?.[0]?.clientX ?? 0;
+        const dx = x1 - x0;
+
+        if (dx > 60) {
+          go(currentIndex - 1);
+          restartClock();
+        } else if (dx < -60) {
+          go(currentIndex + 1);
+          restartClock();
+        }
+      },
+      { passive: true }
+    );
+
+    // ----- Hover Pause (desktop) -----
+    heroSlider.addEventListener("mouseenter", () => {
+      paused = true;
     });
 
-    /* Hover Pause */
-    heroSlider.addEventListener("mouseenter", () => clearInterval(heroTimer));
-    heroSlider.addEventListener("mouseleave", start);
-  }
+    heroSlider.addEventListener("mouseleave", () => {
+      paused = false;
+      restartClock();
+    });
+
+    // ----- Page visibility pause (prevents timer “catch-up” lag) -----
+    document.addEventListener("visibilitychange", () => {
+      paused = document.hidden;
+      if (!paused) restartClock();
+    });
+
+    // ----- Preload images then start clock -----
+    // Background images don't reliably preload; we ensure at least the first slide is ready.
+    function preload(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
+    }
+
+    (async () => {
+      // Preload the first image (highest impact) and kick off others in the background
+      if (slideUrls.length > 0) {
+        await preload(slideUrls[0]);
+        // Fire-and-forget the rest
+        slideUrls.slice(1).forEach((u) => preload(u));
+      }
+
+      // Ensure correct initial state (no flash)
+      go(currentIndex);
+      startClock();
+    })();
+  })();
 
   /* ==========================
      Smooth scroll to collections
@@ -157,23 +321,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-
-  /* ==========================
-     NAV SMOOTH SCROLL
-  =========================== */
-  document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener("click", e => {
-      e.preventDefault();
-      document.querySelector(link.getAttribute("href"))?.scrollIntoView({
-        behavior: "smooth"
-      });
-      mobileNav.classList.remove("open");
-    });
-  });
-
-}); // END DOMContentLoaded
-
-
 
 /* ---------------------------------------
    SCROLL REVEAL (OUTSIDE DOM LOADED)

@@ -1,4 +1,8 @@
-:root{
+/* =====================================================================
+   0) Design Tokens
+   - Centralized palette used across the site
+===================================================================== */
+:root {
   --gold: #D4AF37;
   --cream: #EBE9C5;
   --light-gray: #E8E8E8;
@@ -6,163 +10,256 @@
   --teal: #3B868F;
 }
 
+/* =====================================================================
+   1) Document Defaults
+===================================================================== */
 html {
   scroll-behavior: smooth;
 }
 
-/* -------------------------------------------------
-   GLOBAL BACKGROUND BASE
+/* =====================================================================
+   2) Global Background Base
    Luxury: gold + ice blue ambient light
--------------------------------------------------- */
+===================================================================== */
 body {
   margin: 0;
-  font-family: 'Montserrat', system-ui, -apple-system;
+  font-family: "Montserrat", system-ui, -apple-system;
+  overflow-x: hidden;
 
   /* Layered metallic + ambient lighting gradients */
   background:
-      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.85), transparent 65%),
-      radial-gradient(circle at 85% 25%, rgba(212, 175, 55, 0.45), transparent 65%),
-      radial-gradient(circle at 50% 80%, rgba(59, 134, 143, 0.40), transparent 65%),
-      #f8f7f4;
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.85), transparent 65%),
+    radial-gradient(circle at 85% 25%, rgba(212, 175, 55, 0.45), transparent 65%),
+    radial-gradient(circle at 50% 80%, rgba(59, 134, 143, 0.40), transparent 65%),
+    #f8f7f4;
 
   background-size: 200% 200%;
   background-attachment: fixed;
   transition: background-position 1.5s ease, background-size 1.5s ease;
-  overflow-x: hidden;
 }
 
-/* headings / logo use Playfair Display for a luxurious feel */
-h1, h2, h3, .header-logo {
-  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+/* =====================================================================
+   HEADER (Fixed) — Copy/Replace Block (REPLACES your last message code)
+   Goals:
+   - Logo is ALWAYS truly centered (independent of left/right content)
+   - Mobile address clamps with ellipsis (no cutoff)
+   - Removes flex/grid conflicts and duplicate hamburger rules
+   - Keeps your existing classes/HTML exactly the same
+===================================================================== */
+
+/* Headings / logo use Playfair Display for a luxurious feel */
+h1,
+h2,
+h3,
+.header-logo {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   letter-spacing: 0.2px;
 }
 
-/* HEADER: fixed and always visible */
+/* =========================
+   Header Shell
+========================= */
 .top-header {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  inset: 0 0 auto 0; /* top:0; left:0; right:0 */
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 2rem 1.5rem;
   background: var(--light-gray);
   border-bottom: 2px solid var(--gold);
-  z-index: 2000;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 1rem 1.5rem;
 }
 
-
-/* Header animation on scroll */
 .top-header.is-scrolled {
-  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 }
 
+/* =========================
+   Left / Right Zones
+   - Stay in normal flow
+   - Prevent content from sliding under the centered logo
+========================= */
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0; /* enables truncation where needed */
+}
+
+/* Guardrail so long text can't overlap the absolute-centered logo */
+.header-left,
+.header-right {
+  max-width: calc(50% - 70px); /* half header minus logo space */
+  overflow: hidden;
+}
+
+.header-left {
+  justify-content: flex-start;
+}
+
+.header-right {
+  justify-content: flex-end;
+}
+
+/* =========================
+   True Center Logo (ALWAYS)
+========================= */
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Don't block taps on hamburger/address */
+  pointer-events: none;
+}
+
+.header-center .logo-img {
+  pointer-events: auto;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   Typography / Links
+========================= */
 .header-phone,
 .header-address {
-white-space: nowrap;
-font-size: 0.9rem;
-margin: 0.1rem;
-font-weight: 600;
-color: var(--dark-gray);
-text-decoration: none;
-}
-
-.header-phone,
-.header-address {
-  justify-self: start; /* left */
-}
-
-.header-address {
-  justify-self: end; /* right */
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--dark-gray);
+  text-decoration: none;
   white-space: nowrap;
-  min-width: 220px;
 }
 
-/* ---------------------------------------
-   PHONE NUMBER HOVER ANIMATION
-   - Adds a smooth gold color shift
-   - Slight upward movement for elegance
----------------------------------------- */
 .header-phone {
-  transition: color 0.3s ease, transform 0.3s ease; /* smooth animation */
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .header-phone:hover {
-  color: var(--gold);          /* shift to gold on hover */
-  transform: translateY(-2px); /* subtle lift effect */
+  color: var(--gold);
+  transform: translateY(-2px);
 }
 
-.header-logo {
-  display:flex;
-  justify-content:center;
-  align-items:center;
+/* Desktop: do NOT truncate address (show full) */
+@media (min-width: 851px) {
+  .header-left,
+  .header-right {
+    max-width: none;
+    overflow: visible;
+  }
+
+  .header-address {
+    overflow: visible;
+    text-overflow: clip;
+    max-width: none;
+  }
 }
 
+/* =========================
+   Hamburger (single source)
+========================= */
+.hamburger {
+  display: none; /* shown on mobile */
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 22px;
+  height: 3px;
+  background: var(--dark-gray);
+  border-radius: 2px;
+}
+
+/* =========================
+   Logo
+========================= */
 .logo-img {
-  max-height:56px;     /* adjusts on desktop */
+  display: block;
   width: auto;
-  display:block;
+  max-height: 56px;
+
+  opacity: 0;
+  animation: logoFadeIn 1.2s ease forwards;
+  animation-delay: 0.3s;
 }
 
-/* ---------------------------------------
-   LOGO FADE-IN ANIMATION
-   - Logo fades in on page load
-   - Starts slightly low and rises into place
-   - Creates a luxurious, premium feel
----------------------------------------- */
-.logo-img {
-  opacity: 0;                                 /* start invisible */
-  animation: fadeIn 1.2s ease forwards;       /* run fade-in animation */
-  animation-delay: 0.3s;                      /* slight delay for smoothness */
-}
-
-/* Keyframes controlling the fade + slide */
-@keyframes fadeIn {
+@keyframes logoFadeIn {
   from {
-    opacity: 0;                                /* fully invisible */
-    transform: translateY(8px);                /* slightly lower on start */
+    opacity: 0;
+    transform: translateY(8px);
   }
   to {
-    opacity: 1;                                /* fully visible */
-    transform: translateY(0);                  /* natural position */
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* smaller screens: reduce logo size */
-@media (max-width:768px){
-  .logo-img { max-height:44px; }
-  .top-header { padding: 0.75rem 1rem; }
+/* =========================
+   Mobile Adjustments
+========================= */
+@media (max-width: 850px) {
+  .top-header {
+    padding: 1.35rem 1rem;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .header-phone {
+    display: none;
+  }
+
+  .logo-img {
+    max-height: 44px;
+  }
+
+  /* Clamp address so it never runs off-screen */
+  .header-address {
+    max-width: 16ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.65rem;
+  }
 }
 
-.header-logo {
-font-size: 1.2rem;
-}
-
-.header-phone,
-.header-address {
-font-size: 0.85rem;
-}
-
-/* ---------------------------
-      DESKTOP NAV BAR
----------------------------- */
-
-/* NAVBAR: fixed BELOW header */
+/* =====================================================================
+   NAV BAR (unchanged from your block)
+===================================================================== */
 .nav-bar {
   position: fixed;
   left: 0;
   width: 100%;
-  background: var(--teal);
-  z-index: 1999;
 
-  /* these animate when scrolling */
+  z-index: 1999;
+  background: var(--teal);
   transition: transform 0.3s ease;
 }
 
-/* Hide navbar on scroll down */
 .nav-bar.hide {
   transform: translateY(-100%);
+}
+
+@media (max-width: 850px) {
+  .nav-bar { display: none; }
 }
 
 .nav-links {
@@ -178,7 +275,7 @@ font-size: 0.85rem;
   position: relative;
   display: inline-block;
   padding: 0.3rem 0.6rem;
-  color: white;
+  color: #fff;
   text-decoration: none;
   z-index: 0;
 }
@@ -187,188 +284,323 @@ font-size: 0.85rem;
   content: "";
   position: absolute;
   inset: 0;
+
+  z-index: -1;
   background: rgba(212, 175, 55, 0.18);
   transform-origin: top;
   transform: scaleY(0);
   transition: transform 0.25s ease;
-  z-index: -1;
 }
 
 .nav-links a:hover::before {
   transform: scaleY(1);
 }
 
-/* ---------------------------
-      MOBILE HAMBURGER 
----------------------------- */
-.hamburger {
-  display: none; /* hidden on desktop */
-  flex-direction: column;
-  gap: 4px;
-  background: none;
-  border: none;
-  cursor: pointer;
+/* =====================================================================
+   MOBILE NAV — Luxury Drawer (Safari/Chrome Optimized)
+   Goals:
+   - Smooth GPU animation (transform, not left)
+   - Premium “glass” feel with safe fallbacks
+   - Backdrop overlay + staggered link entrance
+===================================================================== */
+
+/* Backdrop overlay behind the drawer */
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+
+  /* Dim + subtle color cast */
+  background: rgba(0, 0, 0, 0.38);
+
+  /* Blur on supported browsers (Safari needs -webkit- prefix) */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  opacity: 0;
+  transition: opacity 220ms ease;
 }
 
-.hamburger span {
-  width: 22px;
-  height: 3px;
-  background: var(--dark-gray);
-  border-radius: 2px;
-}
-
-/* ---------------------------
-      MOBILE SLIDE-IN NAV
----------------------------- */
+/* Drawer shell */
 .mobile-nav {
   position: fixed;
   top: 0;
-  left: -260px; /* hidden off-screen */
-  width: 260px;
-  height: 100%;
-  padding-top: 4rem;
-  background: var(--teal);
-  color: white;
-  transition: left 0.35s ease;
-
-  /* Ensure sidebar is ABOVE hero and all other content */
-  z-index: 9999;
-}
-
-.mobile-nav ul {
-  list-style: none;
-  padding-left: 1.5rem;
-}
-
-.mobile-nav li {
-  margin: 1.2rem 0;
-}
-
-.mobile-nav a {
-  color: white;
-  text-decoration: none;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-/* When opened */
-.mobile-nav.open {
   left: 0;
+
+  width: min(320px, 86vw);
+  height: 100dvh;
+  padding-top: 4rem;
+
+  /* Luxury teal silk background with gold light */
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(212, 175, 55, 0.25),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 90%,
+      rgba(255, 255, 255, 0.18),
+      transparent 40%
+    ),
+    linear-gradient(
+      180deg,
+      #3b868f 0%,
+      #337a82 45%,
+      #2c6e75 100%
+    );
+
+  /* Glass effect where supported (safe if ignored) */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  color: #fff;
+
+  /* GPU-friendly entrance */
+  transform: translate3d(-105%, 0, 0);
+  opacity: 0.98;
+  will-change: transform, opacity;
+
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 200ms ease;
+
+  z-index: 9999;
+
+  /* Subtle depth */
+  box-shadow: 14px 0 40px rgba(0, 0, 0, 0.28);
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+
+  /* Prevent inner content from causing horizontal scroll */
+  overflow: hidden;
 }
-/* To close nav */
-.close-nav {
+
+/* Optional micro-grain overlay */
+.mobile-nav::before {
+  content: "";
   position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 2rem;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
+  inset: 0;
+  pointer-events: none;
+
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.025),
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+
+  opacity: 0.4;
 }
 
-/* ---------------------------
-      RESPONSIVE BREAKPOINT
----------------------------- */
-@media (max-width: 850px) {
-  .nav-bar {
-    display: none; /* hide desktop nav */
-  }
+/* =====================================================================
+   MOBILE NAV — Logo Reveal (Simple + Premium)
+   - Runs only when drawer opens
+   - No looping, minimal GPU work
+===================================================================== */
 
-  .hamburger {
-     display: flex;
-     position: static;
-  }
-
-  .top-header {
-     justify-content: center;
-  }
-
-  .header-phone {
-     display: none; /* simplifies mobile view */
-  }
-}
-
-/* ---------------------------------------
-   SIDEBAR LOGO + FADE-IN ANIMATION
----------------------------------------- */
+/* Logo area (keep your existing markup; this just refines spacing) */
 .mobile-nav-logo {
   width: 100%;
-  padding: 1rem 1.2rem;
   display: flex;
-  justify-content: flex-start;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  justify-content: flex-start;
+  padding: 0.75rem 0 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
 
-/* Logo image styling + fade-in */
 .mobile-nav-logo img {
-  width: 80px; /* smaller logo */
+  width: 92px;
   height: auto;
-  position: absolute;
-  top: 1rem;
-  left: 1rem; /* near the X area */
-  margin: 0;
-  filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.25));
 
-  /* start hidden (no opacity) */
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.28));
+  opacity: 1; /* logo should not be hidden by default */
+}
+
+.mobile-nav-logo img {
+  transform-origin: left center;
+  will-change: transform, opacity;
+}
+
+/* Start state (only while menu is CLOSED) */
+.mobile-nav:not(.open) .mobile-nav-logo img {
   opacity: 0;
+  transform: translate3d(0, 10px, 0) scale(0.985);
 }
 
-/* When the mobile nav is opened, fade the logo in */
+/* Animate in when menu opens */
 .mobile-nav.open .mobile-nav-logo img {
-  animation: sidebarLogoFade 0.8s ease forwards;
-  animation-delay: 0.1s;
+  animation: mobileLogoReveal 420ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: 60ms;
 }
 
-
-/* fade-in keyframes for sidebar logo */
-@keyframes sidebarLogoFade {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
+@keyframes mobileLogoReveal {
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
-/* ---------------------------
-   MOBILE NAV LINK ANIMATION
----------------------------- */
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav.open .mobile-nav-logo img {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 
-/* Base mobile link styling */
+  .mobile-nav:not(.open) .mobile-nav-logo img {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Open state */
+.mobile-nav.open {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+/* Backdrop open state (controlled via [hidden] + class in JS) */
+.mobile-nav-backdrop.is-open {
+  opacity: 1;
+}
+
+/* Top area polish */
+.mobile-nav-top {
+  position: relative;
+  padding: 0 1.2rem 1rem;
+}
+
+/* Close button: more premium */
+.close-nav {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+
+  color: #fff;
+  cursor: pointer;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 1.6rem;
+  line-height: 1;
+
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.close-nav:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) {
+  .close-nav:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.32);
+  }
+}
+
+/* Links list */
+.mobile-nav ul {
+  list-style: none;
+  padding: 1rem 1.25rem 1.25rem;
+  margin: 0;
+}
+
+/* Each link row */
+.mobile-nav li {
+  margin: 0;
+}
+
+/* Link styling — bigger, calmer, premium */
 .mobile-nav a {
-  color: white;
+  display: block;
+  padding: 0.95rem 0.5rem;
+
+  color: #fff;
   text-decoration: none;
-  font-size: 1.1rem;
-  font-weight: 600;
+
+  font-size: 1.15rem;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+  /* Stagger entrance */
+  opacity: 0;
+  transform: translate3d(-10px, 0, 0);
+}
+
+/* Remove hover gimmicks (keeps it premium) */
+@media (hover: hover) {
+  .mobile-nav a:hover {
+    color: #fff;
+  }
+}
+
+/* Stagger animation on open (only runs when menu opens) */
+.mobile-nav.open a {
+  animation: mobileNavItemIn 320ms ease forwards;
+}
+
+.mobile-nav.open li:nth-child(1) a { animation-delay: 40ms; }
+.mobile-nav.open li:nth-child(2) a { animation-delay: 70ms; }
+.mobile-nav.open li:nth-child(3) a { animation-delay: 100ms; }
+.mobile-nav.open li:nth-child(4) a { animation-delay: 130ms; }
+.mobile-nav.open li:nth-child(5) a { animation-delay: 160ms; }
+
+@keyframes mobileNavItemIn {
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav,
+  .mobile-nav-backdrop {
+    transition: none;
+  }
+
+  .mobile-nav a {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Mobile nav link animation */
+.mobile-nav a {
   transition: color 0.25s ease, padding-left 0.25s ease;
 }
 
-/* Hover animation (desktop + devices that support hover) */
 @media (hover: hover) {
   .mobile-nav a:hover {
-    color: var(--gold);           /* gold highlight */
-    padding-left: 8px;            /* slight slide to the right */
+    color: var(--gold);
+    padding-left: 8px;
   }
 }
 
-/* Touch feedback for mobile */
 .mobile-nav a:active {
   color: var(--gold);
   padding-left: 8px;
 }
 
-/* ---------------------------------------
-   HERO SECTION - IMAGE SLIDER
----------------------------------------- */
-
-/* Hero container */
+/* =====================================================================
+   6) Hero Section Shell (Slider)
+   IMPORTANT: Adds a safe fallback so hero doesn't "vanish" before JS runs
+===================================================================== */
 .hero {
   display: flex;
-  margin-top: calc(var(--hero-offset));
+  margin-top: var(--hero-offset, 140px);
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 1rem;
@@ -379,30 +611,33 @@ font-size: 0.85rem;
 .hero-slider {
   position: relative;
   width: 100%;
-  max-width: 1100px;         /* keeps desktop width reasonable */
-  height: 260px;             /* long + skinny on desktop */
+  max-width: 1100px;
+  height: 260px;
   border-radius: 16px;
   overflow: hidden;
-  background: #000;          /* fallback while images load */
+  background: #000; /* fallback while images load */
+  contain: layout paint
 }
 
 /* Each slide (full overlay) */
 .hero-slide {
   position: absolute;
-  inset: 0;                  /* top:0; right:0; bottom:0; left:0; */
+  inset: 0;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
   opacity: 0;
-  transform: scale(0.98);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+  transform: translateZ(0) scale(0.98); /* preserves your existing scale look */
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 /* Active slide visible */
 .hero-slide.is-active {
   opacity: 1;
-  transform: scale(1);
+  transform: translateZ(0) scale(1);
   z-index: 1;
 }
 
@@ -412,21 +647,21 @@ font-size: 0.85rem;
   left: 0;
   bottom: 0;
   width: 100%;
+
   padding: 1.25rem 2rem;
   box-sizing: border-box;
 
-  /* Soft gradient to make text readable over images */
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.65),
     rgba(0, 0, 0, 0.15),
     rgba(0, 0, 0, 0)
   );
-  color: #ffffff;
+  color: #fff;
 }
 
 .hero-title {
-  margin: 0 0 0.3rem 0;
+  margin: 0 0 0.3rem;
   font-size: 1.5rem;
 }
 
@@ -436,45 +671,42 @@ font-size: 0.85rem;
   max-width: 520px;
 }
 
-/* ---------------------------------------
-   HERO BACKGROUND IMAGES
-   Replace these URLs with your own images
----------------------------------------- */
+/* Hero background images */
 .hero-slide--store {
-  background-image: url("my-website/images/store.jpg"); /* TODO: replace with your store image */
+  background-image: url("my-website/images/store.jpg");
 }
 
 .hero-slide--engagement {
-  background-image: url("my-website/images/engagement.jpg"); /* engagement rings image */
+  background-image: url("my-website/images/engagement.jpg");
 }
 
 .hero-slide--inventory {
-  background-image: url("my-website/images/inventory.jpg"); /* display cases / jewelry image */
+  background-image: url("my-website/images/inventory.jpg");
 }
 
 .hero-slide--repairs {
-  background-image: url("my-website/images/repairs.jpg"); /* bench / tools / repair image */
+  background-image: url("my-website/images/repairs.jpg");
 }
 
 .hero-slide--custom {
-  background-image: url("my-website/images/custom.jpg"); /* sketching / custom design image */
+  background-image: url("my-website/images/custom.jpg");
 }
 
-/* ---------------------------------------
-   HERO ARROWS (DESKTOP ONLY)
----------------------------------------- */
+/* Hero arrows (desktop) */
 .hero-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   width: 36px;
   height: 36px;
+
   border-radius: 50%;
   border: none;
   cursor: pointer;
 
-  background: rgba(59, 134, 143, 0.95); /* teal */
-  color: #ffffff;
+  background: rgba(59, 134, 143, 0.95);
+  color: #fff;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -496,22 +728,18 @@ font-size: 0.85rem;
   transform: translateY(-50%) scale(1.05);
 }
 
-/* ---------------------------------------
-   HERO SLIDE INDICATORS – PREMIUM STYLE
----------------------------------------- */
-/* SLIDE INDICATORS – BAR STYLE */
+/* Hero dots */
 .hero-dot {
   width: 46px;
   height: 6px;
   border-radius: 4px;
-  background: rgba(0,0,0,0.25);
+  background: rgba(0, 0, 0, 0.25);
   cursor: pointer;
   position: relative;
   overflow: hidden;
   border: none;
 }
 
-/* progress bar overlay */
 .hero-dot::after {
   content: "";
   position: absolute;
@@ -520,7 +748,7 @@ font-size: 0.85rem;
   height: 100%;
   width: 0%;
   background: var(--gold);
-  transition: width 5s linear; /* duration of progress */
+  transition: width 5s linear;
   opacity: 0;
 }
 
@@ -530,19 +758,16 @@ font-size: 0.85rem;
 }
 
 .hero-dot.is-active {
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   transition: background 0.3s ease;
 }
 
-/* ---------------------------------------
-   RESPONSIVE HERO (MOBILE / TABLET)
-   - Taller, vertical feel
----------------------------------------- */
+/* Responsive hero */
 @media (max-width: 768px) {
   .hero-slider {
-    height: 70vh;        /* tall & slim on mobile */
-    max-height: 520px;   /* avoid being absurdly tall on large phones */
-    border-radius: 0;    /* optional: edge-to-edge look */
+    height: 70vh;
+    max-height: 520px;
+    border-radius: 0;
   }
 
   .hero-overlay {
@@ -557,76 +782,71 @@ font-size: 0.85rem;
     font-size: 0.95rem;
   }
 
-  /* Hide arrows on mobile; use swipe instead */
   .hero-arrow {
     display: none;
   }
 }
 
-/* ---------------------------------------
-   SHOP PROMO SECTION
-   - "Shop the Best for Less"
----------------------------------------- */
-
+/* =====================================================================
+   7) Shop Promo Section
+===================================================================== */
 .shop-promo {
   display: flex;
   justify-content: center;
-  padding: 2rem 1rem 3rem 1rem;
-  background: transparent; /* matches overall page background */
+  padding: 2rem 1rem 3rem;
+  background: transparent;
 }
 
 .shop-promo-inner {
   max-width: 900px;
   width: 100%;
   text-align: center;
+
   padding: 1.75rem 1.5rem;
-  background: #ffffff;
+  background: #fff;
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
-/* Title styling */
 .shop-promo-title {
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 0.75rem;
   font-size: 1.8rem;
   letter-spacing: 0.5px;
   color: var(--dark-gray);
 }
 
-/* Emphasized words: "Best" and "Less" */
 .emphasis-best {
-  color: var(--gold);          /* gold for “Best” */
+  color: var(--gold);
   font-weight: 800;
 }
 
 .emphasis-less {
-  color: var(--teal);          /* teal for “Less” */
+  color: var(--teal);
   font-weight: 800;
   font-style: italic;
 }
 
-/* Supporting text */
 .shop-promo-text {
-  margin: 0 auto 1.25rem auto;
+  margin: 0 auto 1.25rem;
   max-width: 620px;
   font-size: 0.98rem;
   line-height: 1.6;
 }
 
-/* Call-to-action button */
 .shop-promo-button {
   padding: 0.7rem 1.7rem;
   border-radius: 999px;
   border: none;
   cursor: pointer;
+
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 
   background: var(--teal);
-  color: #ffffff;
+  color: #fff;
 
   transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
@@ -637,7 +857,6 @@ font-size: 0.85rem;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .shop-promo-inner {
     padding: 1.5rem 1.2rem;
@@ -652,7 +871,7 @@ font-size: 0.85rem;
   }
 }
 
-/* Promo Sectino entrance animation */
+/* Promo section entrance animation */
 .shop-promo-inner {
   opacity: 0;
   transform: translateY(20px);
@@ -666,207 +885,149 @@ font-size: 0.85rem;
     transform: translateY(0);
   }
 }
-.collections {
-  display: block;
-  justify-content: center;
-  padding: 3rem 1rem 3.5rem 1rem;
-  background: transparent;
-}
 
-.collections-inner {
-  width: 100%;
+/* =====================================================================
+   Collections — Smooth Gallery (Rework)
+   Goals:
+   - Remove “boxy / pill” card feel
+   - Keep same text + layout intent
+   - Feel more like a curated gallery
+===================================================================== */
+/* Centered, width-aligned section heading */
+.collections-heading {
+  position: relative;
+
   max-width: 1100px;
-}
+  margin: 2.5rem auto 1.2rem;
+  padding: 0 1rem;
 
-.collections-title {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.8rem;
   text-align: center;
-  letter-spacing: 0.5px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
   color: var(--dark-gray);
 }
 
-.collections-subtitle {
-  margin: 0 0 2rem 0;
-  text-align: center;
-  font-size: 0.98rem;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Grid of collection cards */
 .collections-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
-/* Individual card */
+/* Optional: give the section itself a soft panel feel without boxing each item */
+.collections {
+  padding: 3.25rem 1rem 3.75rem;
+}
+
+.collections::before {
+  content: "";
+  display: block;
+  height: 1px;
+  max-width: 1100px;
+  margin: 0 auto 2.25rem;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* No card background, no borders, no shadow */
 .collection-card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 1.4rem 1.2rem;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  text-align: center;
 }
 
-/* ---------------------------------------
-   COLLECTION TEXT POLISH
-   - improves readability + visual hierarchy
----------------------------------------- */
+/* Image becomes the “anchor” of each item */
+.collection-img {
+  display: block;
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Type feels “editorial” vs “card label” */
 .collection-name {
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: 0.5px; /* elegant spacing */
+  margin: 0.9rem 0 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--dark-gray);
 }
 
 .collection-text {
-  font-size: 1.1rem;    /* slightly smaller body text */
-  line-height: 1.3;
+  margin: 0 auto;
+  max-width: 36ch;
+
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: rgba(79, 78, 78, 0.9);
 }
 
-/* Hover effect: subtle lift + gold border */
-.collection-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-  border-color: var(--gold);
+/* Subtle divider line under each item (replaces “box”) */
+.collection-card::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: 1.1rem;
+  background: rgba(0, 0, 0, 0.08);
 }
 
-/* Responsive layout for tablets + mobile */
 @media (max-width: 900px) {
   .collections-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem;
   }
 }
 
 @media (max-width: 600px) {
   .collections-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
-  .collections {
-    padding: 2.5rem 1rem 3rem 1rem;
+  .collection-img {
+    height: 240px;
+    border-radius: 16px;
+  }
+
+  .collection-text {
+    max-width: 48ch;
   }
 }
 
-/* Collection image styling */
-.collection-img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-  display: block;
-}
-
-/* ---------------------------------------
-   COLLECTION IMAGE HOVER ZOOM
-   - subtle upscale feel
----------------------------------------- */
-.collection-img {
-  transition: transform 0.35s ease;  /* smooth motion */
-}
-
-.collection-card:hover .collection-img {
-  transform: scale(1.04); /* gentle zoom, not tacky */
-}
-
-/* Styling for collections heading */
-.collections-heading {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 700;
-  margin-top: 2.5rem;
-  margin-bottom: 1.2rem;
-  letter-spacing: 1px;
-  color: var(--dark-gray);
-  position: relative;
-}
-
-/* More styling */
-.collections-heading::after {
-  content: "";
-  display: block;
-  width: 70px;
-  height: 4px;
-  background: var(--gold);
-  margin: 0.6rem auto 0 auto;
-  border-radius: 4px;
-}
-
-/* Scroll reveal base state */
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-/* When element enters the viewport */
-.reveal-on-scroll.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
+/* Footer blurb */
 .collections-footer {
   margin-top: 2rem;
-  text-align: center;
-  font-size: 0.98rem;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.7;
-  color: var(--dark-gray);
-}
+  padding: 2rem 1rem 0;
+  margin-inline: auto;
+  max-width: 720px;
 
-/* ---------------------------------------
-   Collections footer styling upgrade
-   - Better spacing and sizing
-   - Cleaner typography
-   - Center alignment
----------------------------------------- */
-.collections-footer {
-  font-size: 1.05rem;            /* slightly larger text */
-  line-height: 1.8;              /* adds breathing room */
-  padding: 2rem 1rem 0;          /* spacing above the footer */
-  color: var(--dark-gray);
   text-align: center;
-  max-width: 720px;              /* keeps text block narrow */
-  margin: 0 auto;
+  font-size: 1.05rem;
+  line-height: 1.8;
   font-weight: 500;
-  letter-spacing: 0.3px;         /* subtle premium feel */
+  letter-spacing: 0.3px;
+  color: var(--dark-gray);
 }
 
 .collections-footer p {
-  margin: 0;                     /* removes default spacing */
+  margin: 0;
 }
 
-/* ---------------------------------------
-   Optional gold bar accent (premium look)
----------------------------------------- */
+/* Gold bar accent (animated when .collections-footer gets .is-visible) */
 .collections-footer::before {
   content: "";
   display: block;
   width: 70px;
   height: 3px;
-  background: var(--gold);
-  margin: 0 auto 1rem auto;      /* center and add spacing */
+  margin: 0 auto 1rem;
   border-radius: 3px;
-}
-
-/* ---------------------------------------
-   Collections footer premium underline
-   + fade/slide animation on scroll
----------------------------------------- */
-.collections-footer::before {
-  content: "";
-  display: block;
-  width: 70px;
-  height: 3px;
   background: var(--gold);
-  margin: 0 auto 1rem auto;
-  border-radius: 3px;
 
   /* animate on reveal */
   opacity: 0;
@@ -874,83 +1035,85 @@ font-size: 0.85rem;
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-/* When element becomes visible on scroll */
 .collections-footer.is-visible::before {
   opacity: 1;
   transform: translateY(0);
 }
 
+/* =====================================================================
+   Services Section
+   - Heading + underline
+   - Service cards (with optional image)
+   - "We Buy Gold" highlighted card + shine effect
+   - Footer blurb with gold accent
+===================================================================== */
+
 /* ---------------------------------------
-   SERVICES HEADING
-   - matches collection styling
-   - premium gold underline
+   Services Heading
 ---------------------------------------- */
 .services-heading {
+  position: relative;
+  margin-top: 5.5rem; /* spacing from Collections */
+  margin-bottom: 0;
+
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
-  margin-top: 5.5rem;         /* a little more spacing from collections */
-  margin-bottom: 0rem;
   letter-spacing: 1px;
   color: var(--dark-gray);
-  position: relative;
 }
 
-/* underline bar under Services title */
 .services-heading::after {
   content: "";
   display: block;
   width: 70px;
   height: 4px;
-  background: var(--gold);
-  margin: 0.6rem auto 0 auto;
+  margin: 0.6rem auto 0;
   border-radius: 4px;
+  background: var(--gold);
 }
 
 /* ---------------------------------------
-   SERVICES SECTION
-   - single column layout on all screen sizes
-   - centered and premium spacing
+   Services Layout
 ---------------------------------------- */
 .services {
-  max-width: 800px;         /* keeps content narrow and elegant */
+  max-width: 800px;
   margin: 2rem auto 4rem;
   padding: 0 1rem;
+
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;              /* spacing between cards */
+  gap: 1.5rem;
+
   background: transparent;
 }
 
 /* ---------------------------------------
-   SERVICE CARD STYLE
-   - similar feel to collections cards
-   - sized for text instead of images
+   Service Cards (Base)
 ---------------------------------------- */
 .service-card {
-  background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.06);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 14px;
   padding: 1.6rem 1.4rem;
+
   text-align: center;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* Hover highlight */
 .service-card:hover {
   border-color: var(--gold);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
 }
 
-/* Title styling */
 .service-card h3 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem;
   font-size: 1.2rem;
   letter-spacing: 0.5px;
 }
 
-/* Text styling */
 .service-card p {
   margin: 0;
   font-size: 0.95rem;
@@ -958,45 +1121,40 @@ font-size: 0.85rem;
 }
 
 /* ---------------------------------------
-   SERVICE IMAGES
-   - consistent style with collections
-   - prevents stretching + keeps alignment
+   Service Images
 ---------------------------------------- */
 .service-img {
-  width: 100%;
-  height: 160px;               /* image height control */
-  object-fit: cover;           /* crops nicely */
-  border-radius: 10px;         /* match card rounding */
-  margin-bottom: 1rem;
   display: block;
+  width: 100%;
+  height: 160px;
+  margin-bottom: 1rem;
+
+  object-fit: cover;
+  border-radius: 10px;
+
   transition: transform 0.35s ease;
 }
 
-/* subtle hover zoom */
 .service-card:hover .service-img {
   transform: scale(1.04);
 }
 
-/* Gold-buy highlight card */
+/* ---------------------------------------
+   "We Buy Gold" Highlight Card
+   NOTE: Consolidates duplicate .service-gold-highlight blocks
+---------------------------------------- */
 .service-gold-highlight {
-  border: 1px solid var(--gold);
-  background: rgba(212, 175, 55, 0.05);  /* soft gold wash */
+  position: relative;
+  overflow: hidden;
+
+  padding: 2.2rem 1.8rem; /* larger than other cards */
+
+  /* rich gold gradient */
+  background: linear-gradient(135deg, #d4af37, #f5e27f, #d4af37);
+  border: 2px solid var(--gold);
 }
 
-/* Style for link */
-.gold-price-link a {
-  color: var(--teal);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.25s ease;
-}
-
-/* Make the We Buy Gold box larger */
-.service-gold-highlight {
-  padding: 2.2rem 1.8rem;     /* larger box */
-}
-
-/* Make the heading and text bigger */
+/* larger typography inside highlight card */
 .service-gold-highlight h3 {
   font-size: 1.45rem;
 }
@@ -1005,23 +1163,7 @@ font-size: 0.85rem;
   font-size: 1.15rem;
 }
 
-/* Metallic gold effect */
-.service-gold-highlight {
-  background: linear-gradient(
-    135deg,
-     #d4af37,
-     #f5e27f,
-     #d4af37
-  );
-  border: 2px solid var(--gold);
-}
-
-/* Animation for hover */
-.gold-price-link a:hover {
-  color: var(--gold);
-}
-
-/* zoom text inside gold box */
+/* text zoom on hover (keeps your existing behavior) */
 .service-gold-highlight h3,
 .service-gold-highlight p {
   transition: transform 0.3s ease;
@@ -1032,13 +1174,7 @@ font-size: 0.85rem;
   transform: scale(1.06);
 }
 
-/* Shine overlay effect */
-.service-gold-highlight {
-  position: relative;
-  overflow: hidden;
-}
-
-/* Shine element */
+/* shine sweep overlay */
 .service-gold-highlight::after {
   content: "";
   position: absolute;
@@ -1046,6 +1182,7 @@ font-size: 0.85rem;
   left: -150%;
   width: 120%;
   height: 100%;
+
   background: linear-gradient(
     120deg,
     transparent 0%,
@@ -1056,82 +1193,104 @@ font-size: 0.85rem;
   transition: left 0.6s ease;
 }
 
-/* Shine animation on hover */
 .service-gold-highlight:hover::after {
   left: 150%;
 }
 
+/* gold price link */
+.gold-price-link a {
+  color: var(--teal);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.gold-price-link a:hover {
+  color: var(--gold);
+}
+
 /* ---------------------------------------
-   SERVICES SECTION FOOTER
-   - matches collections styling
+   Services Footer
 ---------------------------------------- */
 .services-footer {
+  position: relative;
   max-width: 800px;
-  margin: 0rem auto 0;
+  margin: 0 auto 0;
   padding: 0 1rem 3rem;
+
   text-align: center;
   font-size: 1.05rem;
   line-height: 1.7;
   color: var(--dark-gray);
-  position: relative;
 }
 
-/* gold bar above services footer */
 .services-footer::before {
   content: "";
   display: block;
   width: 70px;
   height: 4px;
-  background: var(--gold);
   margin: 0 auto 1rem;
   border-radius: 4px;
+  background: var(--gold);
 }
+
+/* =====================================================================
+   About Section
+   - 2-column grid on desktop, 1-column on mobile
+   - Card styling matches site language
+   - Title underline animates when the card is revealed (.is-visible)
+   - Footer spans full grid width
+===================================================================== */
 
 /* ---------------------------------------
    ABOUT SECTION HEADING
-   - matches previous headers
+   - Constrained to the same centered width as the section cards
+   - Prevents "About Us" from drifting to the far left on desktop
 ---------------------------------------- */
 .about-heading {
+  width: 100%;
+  max-width: 1100px;
+  margin: 6rem auto 0;      /* top spacing, centered */
+  padding: 0 1rem;          /* aligns with .about-section padding */
   text-align: center;
+
   font-size: 2rem;
   font-weight: 700;
-  margin-top: 6rem;
-  margin-bottom: 0rem;
   letter-spacing: 1px;
-  grid-column: 1 / -1;
   color: var(--dark-gray);
   position: relative;
 }
 
-/* gold underline for About header */
 .about-heading::after {
   content: "";
   display: block;
   width: 70px;
   height: 4px;
   background: var(--gold);
-  margin: 0.6rem auto 0 auto;
+  margin: 0.6rem auto 0;
   border-radius: 4px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ---------------------------------------
-   ABOUT SECTION GRID
-   - horizontal on desktop
-   - vertical on mobile
+   About Layout (Grid)
 ---------------------------------------- */
 .about-section {
+  position: relative;
+  z-index: 1;
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
+
   max-width: 1100px;
   margin: 2rem auto 4rem;
   padding: 0 1rem;
-  position: relative;
-  z-index: 1;
+
   background: transparent;
 }
 
-/* Stack on mobile */
 @media (max-width: 900px) {
   .about-section {
     grid-template-columns: 1fr;
@@ -1139,35 +1298,38 @@ font-size: 0.85rem;
 }
 
 /* ---------------------------------------
-   ABOUT BOXES
+   About Cards
 ---------------------------------------- */
 .about-card {
-  background: #ffffff;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 14px;
-  border: 1px solid rgba(0,0,0,0.08);
   padding: 1.8rem;
+
   text-align: center;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-/* hover polish */
 .about-card:hover {
-  border-color: var(--gold);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* ---------------------------------------
-   ABOUT IMAGES
+   About Images
 ---------------------------------------- */
 .about-img {
+  display: block;
   width: 100%;
   height: 220px;
+  margin-bottom: 1rem;
+
   object-fit: cover;
   border-radius: 10px;
-  margin-bottom: 1rem;
-  display: block;
+
   transition: transform 0.35s ease;
 }
 
@@ -1176,84 +1338,88 @@ font-size: 0.85rem;
 }
 
 /* ---------------------------------------
-   ABOUT TEXT
+   About Typography + Animated Underline
+   - Underline expands when .about-card has .is-visible
 ---------------------------------------- */
 .about-card h3 {
-  margin: 0 0 0.6rem 0;
+  position: relative;
+  display: inline-block;
+
+  margin: 0 0 0.6rem;
   font-size: 1.35rem;
   letter-spacing: 0.5px;
 }
 
 .about-card p {
+  margin: 0; /* prevents unexpected default spacing differences */
   font-size: 1.05rem;
   line-height: 1.6;
-}
-
-/* gold underline animation for About section titles */
-.about-card h3 {
-  position: relative;
-}
-
-/* ---------------------------------------
-   ABOUT SECTION UNDERLINE ANIMATION
-   - full-width gold underline on scroll
----------------------------------------- */
-
-/* gold underline animation for About titles */
-.about-card h3 {
-  position: relative;
-  display: inline-block;
 }
 
 .about-card h3::after {
   content: "";
   position: absolute;
-  bottom: -6px;
   left: 0;
+  bottom: -6px;
+
   width: 100%;
   height: 3px;
+  border-radius: 999px;
   background: var(--gold);
+
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 1.5s ease;
 }
 
-/* underline appears when card is revealed on scroll */
+/* Underline appears when the card is revealed on scroll */
 .about-card.reveal-on-scroll.is-visible h3::after {
   transform: scaleX(1);
 }
 
 /* ---------------------------------------
-   ABOUT SECTION FOOTER
-   - same style as other section footers
+   About Footer (spans grid)
 ---------------------------------------- */
 .about-footer {
+  position: relative;
+  grid-column: 1 / -1;
+
   max-width: 800px;
-  margin: 0rem auto 0;
+  margin: 0 auto;
   padding: 0 1rem 3rem;
+
   text-align: center;
   font-size: 1.05rem;
   line-height: 1.7;
   color: var(--dark-gray);
-  position: relative;
-  grid-column: 1 / -1;
 }
 
-/* gold bar above About footer */
 .about-footer::before {
   content: "";
   display: block;
   width: 70px;
   height: 4px;
-  background: var(--gold);
   margin: 0 auto 1rem;
-  border-radius: 4px;
-}
 
-/* ---------------------------------------
-   CONTACT SECTION HEADING
-   - matches previous heading styles
----------------------------------------- */
+  border-radius: 4px;
+  background: var(--gold);
+}
+/* =====================================================================
+   Contact + Global Enhancements + Seasonal UI
+   - Contact section layout + interactions
+   - Scroll reveal utility (single source of truth)
+   - Background animation + light streaks
+   - Global “glass” card styling + gold highlight override
+   - Desktop hero upgrade
+   - Header/nav spacing helpers (anchor offset)
+   - Holiday popup + snow overlay
+   - Site footer
+===================================================================== */
+
+/* =====================================================================
+   1) CONTACT SECTION
+===================================================================== */
+
 .contact-heading {
   text-align: center;
   font-size: 2rem;
@@ -1265,20 +1431,16 @@ font-size: 0.85rem;
   position: relative;
 }
 
-/* gold underline */
 .contact-heading::after {
   content: "";
   display: block;
   width: 70px;
   height: 4px;
-  background: var(--gold);
-  margin: 0.6rem auto 0 auto;
+  margin: 0.6rem auto 0;
   border-radius: 4px;
+  background: var(--gold);
 }
 
-/* ---------------------------------------
-   CONTACT SECTION
----------------------------------------- */
 .contact-section {
   max-width: 900px;
   margin: 2.5rem auto 4rem;
@@ -1287,22 +1449,18 @@ font-size: 0.85rem;
   background: transparent;
 }
 
-/* the two side-by-side items */
 .contact-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;  /* two equal columns */
-  justify-items: center;           /* center each item in its column */
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
   gap: 4rem;
   margin-bottom: 2rem;
 }
 
-
-/* single centered item below */
 .contact-center-item {
   margin-top: 1.5rem;
 }
 
-/* each item */
 .contact-item,
 .contact-center-item {
   display: flex;
@@ -1310,14 +1468,12 @@ font-size: 0.85rem;
   align-items: center;
 }
 
-/* icon styling */
 .contact-icon {
   width: 40px;
   height: auto;
   margin-bottom: 0.5rem;
 }
 
-/* links */
 .contact-link {
   font-size: 1.15rem;
   font-weight: 600;
@@ -1326,12 +1482,10 @@ font-size: 0.85rem;
   transition: color 0.3s ease;
 }
 
-/* gold hover effect */
 .contact-link:hover {
   color: var(--gold);
 }
 
-/* MOBILE stack */
 @media (max-width: 768px) {
   .contact-row {
     grid-template-columns: 1fr;
@@ -1339,46 +1493,43 @@ font-size: 0.85rem;
   }
 }
 
-/* ---------------------------------------
-   SCROLL REVEAL BASE STATE
-   - start slightly lower and transparent
-   - debugging scroll animation solution
-   - works fine
----------------------------------------- */
+/* =====================================================================
+   2) SCROLL REVEAL UTILITY (single definition)
+   NOTE: JS adds .is-visible once; this is intentionally simple & fast.
+===================================================================== */
+
 .reveal-on-scroll {
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 0.6s ease, transform 0.6s ease;
+  will-change: opacity, transform;
 }
 
-/* ---------------------------------------
-   SCROLL REVEAL VISIBLE STATE
-   - applied when JS adds .is-visible
-   - debugging scroll animation solution
-   - works fine
----------------------------------------- */
 .reveal-on-scroll.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* -------------------------------------------------
-   METALLIC LIQUID ANIMATION
-   - subtle motion like luxury sites
--------------------------------------------------- */
+/* =====================================================================
+   3) BACKGROUND ANIMATION + LIGHT STREAKS
+===================================================================== */
+
 @keyframes luxuryGlow {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
+/* Your base body background (defined earlier) remains the source-of-truth.
+   This only adds motion. */
 body {
   animation: luxuryGlow 16s ease-in-out infinite alternate;
 }
 
-/* -------------------------------------------------
-   LIGHT STREAKS BEHIND CONTENT
--------------------------------------------------- */
+@keyframes streakMove {
+  0%   { transform: translateX(-40%) rotate(15deg); }
+  100% { transform: translateX(140%) rotate(15deg); }
+}
 
 .light-streak {
   position: fixed;
@@ -1386,56 +1537,59 @@ body {
   left: -200px;
   width: 350px;
   height: 100vh;
-  background: linear-gradient(100deg,
-      rgba(255,255,255,0) 0%,
-      rgba(255,255,255,0.9) 50%,
-      rgba(255,255,255,0) 100%);
+
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+
   filter: blur(20px);
   opacity: 0.45;
   pointer-events: none;
   z-index: -1;
+
   transform: rotate(15deg);
   animation: streakMove 8s linear infinite;
 }
 
-/* gold layer version */
 .light-streak.gold {
-  background: linear-gradient(100deg,
-      rgba(255,255,255,0) 0%,
-      rgba(212, 175, 55, 0.5) 50%,
-      rgba(255,255,255,0) 100%);
-  opacity: .3;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(212, 175, 55, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: 0.3;
 }
 
-/* animation */
-@keyframes streakMove {
-  0%   { transform: translateX(-40%) rotate(15deg); }
-  100% { transform: translateX(140%) rotate(15deg); }
-}
+/* =====================================================================
+   4) GLOBAL CARD “GLASS” UPGRADE
+   Applies to: Services, about
+===================================================================== */
 
-/* -------------------------------------------------
-   GLOBAL CARD UPGRADE
-   - Premium luxury card styling
-   - applies to all your card classes
--------------------------------------------------- */
-.collection-card,
+/* Applies to service + about only (Collections gets its own smoother style) */
 .service-card,
 .about-card {
+  position: relative; /* required for hover glow overlay */
   border-radius: 20px;
+
   background: rgba(255, 255, 255, 0.68);
   backdrop-filter: blur(12px);
+
   border: 1px solid rgba(212, 175, 55, 0.18);
   box-shadow: 0 16px 30px rgba(0, 0, 0, 0.07);
+
+  padding: 2rem 1.6rem;
+
   transition:
     transform 0.35s ease,
     box-shadow 0.35s ease,
     background 0.35s ease,
     border-color 0.35s ease;
-  padding: 2rem 1.6rem;
 }
 
-/* gentle hover lift, not harsh */
-.collection-card:hover,
 .service-card:hover,
 .about-card:hover {
   transform: translateY(-8px);
@@ -1444,17 +1598,14 @@ body {
   background: rgba(255, 255, 255, 0.78);
 }
 
-/* smoother rounded images that match card curvature */
+/* Image rounding aligned to card curvature */
 .collection-img,
 .service-img,
 .about-img {
   border-radius: 14px;
 }
 
-.collections-grid {
-  gap: 2rem;
-}
-
+/* Typography polish (inherits your existing sizes unless overridden elsewhere) */
 .collection-name,
 .service-card h3,
 .about-card h3 {
@@ -1469,7 +1620,7 @@ body {
   line-height: 1.55;
 }
 
-.collection-card:hover::after,
+/* Gold glow overlay on hover */
 .service-card:hover::after,
 .about-card:hover::after {
   content: "";
@@ -1480,44 +1631,39 @@ body {
   pointer-events: none;
 }
 
-/* -------------------------------------------------
-   GOLD PREMIUM BOX (We Buy Gold)
-   - restores original gradient + shine
-   - overrides global card glass styling
--------------------------------------------------- */
+/* Keep your intended wider spacing in the collections grid */
+.collections-grid {
+  gap: 2rem;
+}
+
+/* =====================================================================
+   5) GOLD PREMIUM BOX (We Buy Gold)
+   Overrides the global glass card styling to keep metallic gradient + shine.
+===================================================================== */
+
 .service-card.service-gold-highlight {
-  /* layout + positioning */
   position: relative;
   overflow: hidden;
-  padding: 2.2rem 1.8rem;   /* keep it larger than other cards */
 
-  /* original rich gold gradient */
-  background: linear-gradient(
-    135deg,
-    #d4af37,
-    #f5e27f,
-    #d4af37
-  );
+  /* keep it larger than other cards */
+  padding: 2.2rem 1.8rem;
+
+  background: linear-gradient(135deg, #d4af37, #f5e27f, #d4af37);
   border: 2px solid var(--gold);
-  backdrop-filter: none;    /* no glass blur here */
-  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+  backdrop-filter: none;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
   color: #2b2b2b;
 }
 
-/* keep the SAME gradient on hover: only motion + shadow change */
 .service-card.service-gold-highlight:hover {
-  background: linear-gradient(
-    135deg,
-    #d4af37,
-    #f5e27f,
-    #d4af37
-  );
+  /* same gradient; only lift + shadow */
+  background: linear-gradient(135deg, #d4af37, #f5e27f, #d4af37);
   transform: translateY(-8px);
   border-color: var(--gold);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
 }
 
-/* restore text zoom behavior */
+/* Text zoom behavior */
 .service-card.service-gold-highlight h3,
 .service-card.service-gold-highlight p {
   transition: transform 0.3s ease;
@@ -1528,7 +1674,7 @@ body {
   transform: scale(1.06);
 }
 
-/* restore shine sweep overlay */
+/* Shine sweep overlay */
 .service-card.service-gold-highlight::after {
   content: "";
   position: absolute;
@@ -1536,25 +1682,25 @@ body {
   left: -150%;
   width: 120%;
   height: 100%;
+
   background: linear-gradient(
     120deg,
     transparent 0%,
     rgba(255, 255, 255, 0.45) 50%,
     transparent 100%
   );
+
   transform: skewX(-20deg);
   transition: left 0.6s ease;
 }
 
-/* shine moves across on hover */
 .service-card.service-gold-highlight:hover::after {
   left: 150%;
 }
 
-/* ======================================
-   HERO UPGRADE (DESKTOP)
-   Larger, more premium display
-====================================== */
+/* =====================================================================
+   6) HERO UPGRADE (DESKTOP ONLY)
+===================================================================== */
 
 @media (min-width: 769px) {
   .hero {
@@ -1562,9 +1708,9 @@ body {
   }
 
   .hero-slider {
-    max-width: 1400px;    /* wider */
-    height: 420px;        /* taller */
-    border-radius: 20px;  /* smoother */
+    max-width: 1400px;
+    height: 420px;
+    border-radius: 20px;
   }
 
   .hero-overlay {
@@ -1586,168 +1732,71 @@ body {
   }
 }
 
-/* ==========================================
-   TIGHTEN INNER SECTION SPACING
-   (The real cause of the large gaps)
-========================================== */
+/* =====================================================================
+   7) NAV/ANCHOR OFFSET (avoid headings hidden under fixed header/nav)
+   NOTE: Your JS also calculates --hero-offset for the hero.
+===================================================================== */
 
-/* tighten headings */
-.collections-heading,
-.services-heading,
-.about-heading,
-.contact-heading {
-  margin-top: 1.5rem !important;
-  margin-bottom: 1rem !important;
-}
-
-/* tighten space below the grids */
-.collections-grid {
-  margin-bottom: 1rem !important;
-}
-
-/* tighten spacing between section content */
-.services,
-.about-section,
-.contact-section {
-  margin-top: 1rem !important;
-  margin-bottom: 1rem !important;
-}
-
-/* reduce padding inside these footers */
-.collections-footer,
-.services-footer,
-.about-footer {
-  padding-top: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
-  margin-bottom: 0 !important;
-}
-
-/* remove extra margin being added by reveal animation offsets */
-.reveal-on-scroll {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-}
-
-/* ==========================================
-   FIX ANCHOR SCROLL OFFSET FOR HEADERS
-   prevents navbar from cutting off section titles
-========================================== */
 html {
-  scroll-padding-top: 110px; /* tweak this if needed */
+  scroll-padding-top: 110px; /* matches your fixed header + nav behavior */
 }
 
-/* ==========================================
-   FIX SECTION TITLE OVERLAP
-   ensures headings never collide with content
-========================================== */
+/* =====================================================================
+   8) HOLIDAY POPUP + SNOW OVERLAY
+===================================================================== */
 
-.collections-heading,
-.services-heading,
-.about-heading,
-.contact-heading {
-  padding-top: 1rem !important;
-  padding-bottom: 1rem !important;
-}
-
-/* --------------------------------------
-   DESKTOP FIXES
-   -------------------------------------- */
-@media (min-width: 769px) {
-  .top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* ensures vertical centering */
-  }
-
-  /* Increase logo size */
-  .top-header .site-logo img,
-  .top-header .logo img {
-    height: 70px;          /* adjust as needed */
-  }
-
-  /* If logo is text instead of an image */
-  .top-header .site-logo,
-  .top-header .logo {
-    font-size: 2.2rem;     /* safely increases desktop logo text */
-    line-height: 1;
-  }
-}
-
-@media (max-width: 768px) {
-
-  .top-header {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    background: var(--light-gray);
-    border-bottom: 2px solid var(--gold);
-  }
-
-  /* hide phone on mobile */
-  .header-phone {
-    display: none;
-  }
-
-  /* hamburger left */
-  .hamburger {
-    display: flex;
-    position: static;
-    justify-self: start;
-  }
-
-  /* logo centered */
-  .header-logo {
-    justify-self: center;
-    position: static;
-    transform: none;
-  }
-
-  /* address right */
-  .header-address {
-    justify-self: end;
-    padding: 0;
-    margin: 0;
-  }
-}
-
-/* Holiday Popup */
 #holiday-popup {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
   display: flex;
   justify-content: center;
   align-items: center;
+
+  background: rgba(0, 0, 0, 0.35);
   z-index: 999999;
+
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
 }
 
-/* When visible */
 #holiday-popup.show {
   opacity: 1;
   pointer-events: all;
 }
 
+@keyframes popupScale {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .popup-content {
-  background: var(--teal);
-  color: white;
-  padding: 2rem;
-  border-radius: 16px;
-  text-align: center;
+  position: relative;
+
   max-width: 340px;
   width: 90%;
-  animation: popupScale 0.4s ease forwards;
-  position: relative;
+  padding: 2rem;
+
+  border-radius: 16px;
   border: 2px solid var(--gold);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+
+  background: var(--teal);
+  color: #fff;
+
+  text-align: center;
+  animation: popupScale 0.4s ease forwards;
 }
 
 .popup-content h2 {
   font-size: 1.6rem;
-  margin-bottom: 0.8rem;
+  margin: 0 0 0.8rem;
 }
 
 .popup-content p {
@@ -1765,52 +1814,60 @@ html {
   position: absolute;
   top: -10px;
   right: -10px;
+
   width: 32px;
   height: 32px;
+
   border-radius: 50%;
   border: none;
+
   cursor: pointer;
+
   background: var(--gold);
   color: var(--dark-gray);
+
   font-size: 1rem;
 }
 
+/* Snow overlay: hidden by default, shown when JS adds .show */
+#snowflakes {
+  position: fixed;
+  inset: 0;
 
-/* Scale-in animation */
-@keyframes popupScale {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  width: 100vw;
+  height: 100vh;
+
+  overflow: hidden;
+  pointer-events: none;
+
+  z-index: 999998;
+
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
-/* Snow animation container */
-.snowflakes {
-  pointer-events: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 999998;
+#snowflakes.show {
+  opacity: 1;
 }
 
 .snowflake {
   position: absolute;
   top: -10px;
-  font-size: 1.2rem;
-  color: white;
+
+  color: #fff;
   opacity: 0.9;
+
+  font-size: 1.2rem;
   animation: fall linear infinite;
 }
 
-/* Random horizontal starting positions */
-.snowflake:nth-child(1) { left: 5%; animation-duration: 8s; }
+@keyframes fall {
+  0%   { transform: translateY(-10vh) rotate(0deg); }
+  100% { transform: translateY(110vh) rotate(360deg); }
+}
+
+/* starting positions + varied durations */
+.snowflake:nth-child(1) { left: 5%;  animation-duration: 8s; }
 .snowflake:nth-child(2) { left: 15%; animation-duration: 10s; }
 .snowflake:nth-child(3) { left: 25%; animation-duration: 12s; }
 .snowflake:nth-child(4) { left: 40%; animation-duration: 9s; }
@@ -1818,16 +1875,6 @@ html {
 .snowflake:nth-child(6) { left: 70%; animation-duration: 7s; }
 .snowflake:nth-child(7) { left: 85%; animation-duration: 8s; }
 .snowflake:nth-child(8) { left: 95%; animation-duration: 13s; }
-
-/* The falling animation */
-@keyframes fall {
-  0% {
-    transform: translateY(-10vh) rotate(0deg);
-  }
-  100% {
-    transform: translateY(110vh) rotate(360deg);
-  }
-}
 
 .snowflake:nth-child(odd) {
   font-size: 1rem;
@@ -1838,33 +1885,19 @@ html {
   font-size: 1.4rem;
   opacity: 1;
 }
-/* To hide snowflakes upon closing popup */
-#snowflakes {
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
 
-#snowflakes.show {
-  opacity: 1;
-}
-
-#snowflakes {
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 999999 !important;
-  pointer-events: none;
-  transform: none !important;
-}
+/* =====================================================================
+   9) SITE FOOTER
+===================================================================== */
 
 .site-footer {
   text-align: center;
   padding: 1.2rem 0;
+
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--dark-gray);
+
   background: var(--light-gray);
   border-top: 2px solid var(--gold);
 }

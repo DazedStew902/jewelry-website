@@ -143,6 +143,22 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+
+    <!-- =======================
+   Performance: Preload Hero Images
+   - Background images don’t preload by default (CSS background-image).
+   - This prevents the “black flash / late load” on first render.
+======================== -->
+    <link
+      rel="preload"
+      as="image"
+      href="my-website/images/store.jpg"
+      fetchpriority="high"
+    />
+    <link rel="preload" as="image" href="my-website/images/engagement.jpg" />
+    <link rel="preload" as="image" href="my-website/images/inventory.jpg" />
+    <link rel="preload" as="image" href="my-website/images/repairs.jpg" />
+    <link rel="preload" as="image" href="my-website/images/custom.jpg" />
   </head>
 
   <body>
@@ -183,6 +199,8 @@
     </nav>
 
     <!-- MOBILE SIDE NAV (slides from left) -->
+    <!-- Mobile nav backdrop (dim/blur overlay) -->
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop" hidden></div>
     <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
       <div class="mobile-nav-top">
         <div class="mobile-nav-logo">
@@ -540,8 +558,8 @@
             alt="Email"
             class="contact-icon"
           />
-          <a href="mailto:info@rossandcompany.com" class="contact-link"
-            >info@rossandcompany.com</a
+          <a href="mailto:info@rossjewelers.org" class="contact-link"
+            >info@rossjewelers.org</a
           >
         </div>
       </div>
@@ -561,29 +579,6 @@
         </a>
       </div>
     </section>
-    <!-- Holiday Promo Popup -->
-    <div id="holiday-popup" class="popup">
-      <div class="popup-content">
-        <h2>Happy Holidays! Get $100 Off</h2>
-        <p>
-          When purchasing an item of $500 or more. Just screenshot this message
-          and show it in-store. Please present before purchase.
-        </p>
-        <small>Valid until December 25th</small>
-
-        <button id="popup-close">✕</button>
-      </div>
-    </div>
-    <div id="snowflakes" class="snowflakes" aria-hidden="true">
-      <div class="snowflake">❄</div>
-      <div class="snowflake">❄</div>
-      <div class="snowflake">❄</div>
-      <div class="snowflake">❄</div>
-      <div class="snowflake">❄</div>
-      <div class="snowflake">❄</div>
-      <div class="snowflake">❄</div>
-      <div class="snowflake">❄</div>
-    </div>
     <footer class="site-footer">© 2025 Ross and Company Jewelers</footer>
     <script src="script.js"></script>
   </body>
