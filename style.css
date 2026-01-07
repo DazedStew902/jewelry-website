@@ -17,6 +17,29 @@ html {
   scroll-behavior: smooth;
 }
 
+/* While mobile menu is open, force instant scroll behavior (prevents iOS “scroll on close”) */
+html.nav-lock {
+  scroll-behavior: auto !important;
+}
+
+/* =========================================================
+   Prevent horizontal swipe overflow (mobile side-scroll)
+   - Uses clip (preferred) with hidden fallback
+========================================================= */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@supports not (overflow-x: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
 /* =====================================================================
    2) Global Background Base
    Luxury: gold + ice blue ambient light
@@ -616,7 +639,7 @@ h3,
   border-radius: 16px;
   overflow: hidden;
   background: #000; /* fallback while images load */
-  contain: layout paint
+  contain: layout paint;
 }
 
 /* Each slide (full overlay) */

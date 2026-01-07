@@ -1,11 +1,11 @@
 /* =====================================================================
    MOBILE NAV — Luxury Drawer Controller (Safari/Chrome Optimized)
-   Goals:
-   - Smooth open/close with overlay
-   - Close on backdrop tap, close button, Esc
-   - Lock background scroll while open (important for iOS Safari)
+   Fixes:
+   - Close button no longer triggers any smooth scrolling
+   - Nav link scrolling is consistent (especially #home)
+   - No “jolt up then scroll down” effect (restore is instant, then smooth)
+   - Uses header/nav offset so sections don’t hide behind fixed header
 ===================================================================== */
-
 (() => {
   "use strict";
 
@@ -19,24 +19,49 @@
   let isOpen = false;
   let scrollY = 0;
 
-  function lockScroll() {
-    // iOS-safe scroll lock
-    scrollY = window.scrollY || 0;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = "0";
-    document.body.style.right = "0";
-    document.body.style.width = "100%";
+  function getFixedOffset() {
+    const header = document.querySelector(".top-header");
+    const nav = document.querySelector(".nav-bar");
+
+    const headerH = header ? header.offsetHeight : 0;
+
+    // nav-bar is display:none on <=850px, so this becomes 0 on mobile (good)
+    const navH =
+      nav && getComputedStyle(nav).display !== "none" ? nav.offsetHeight : 0;
+
+    return headerH + navH + 12; // small breathing room
   }
 
-  function unlockScroll() {
-    document.body.style.position = "";
-    document.body.style.top = "";
-    document.body.style.left = "";
-    document.body.style.right = "";
-    document.body.style.width = "";
-    window.scrollTo(0, scrollY);
-  }
+function lockScroll() {
+  scrollY = window.scrollY || 0;
+
+  // Force instant scroll behavior while locked (prevents “smooth restore” bugs on iOS)
+  document.documentElement.classList.add("nav-lock");
+
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+}
+
+function unlockScroll() {
+  // Remove fixed positioning first
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+
+  // Restore scroll position instantly (no animation)
+  const scroller = document.scrollingElement || document.documentElement;
+  scroller.scrollTop = scrollY;
+
+  // Let the browser “settle” one frame, then re-enable smooth scrolling
+  requestAnimationFrame(() => {
+    document.documentElement.classList.remove("nav-lock");
+  });
+}
 
   function openMenu() {
     if (isOpen) return;
@@ -46,7 +71,6 @@
 
     if (backdrop) {
       backdrop.hidden = false;
-      // next tick so opacity transition always triggers
       requestAnimationFrame(() => backdrop.classList.add("is-open"));
     }
 
@@ -62,7 +86,6 @@
 
     if (backdrop) {
       backdrop.classList.remove("is-open");
-      // wait for fade-out before hiding to keep transition smooth
       window.setTimeout(() => {
         if (!isOpen) backdrop.hidden = true;
       }, 240);
@@ -85,6 +108,7 @@
   if (closeBtn) {
     closeBtn.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation(); // extra safety
       closeMenu();
     });
   }
@@ -93,28 +117,54 @@
     backdrop.addEventListener("click", () => closeMenu());
   }
 
-  // Close on Esc
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeMenu();
-  });
-
-// Mobile nav links: close menu FIRST (unlock scroll), then smooth-scroll to section
 mobileNav.addEventListener("click", (e) => {
   const link = e.target.closest('a[href^="#"]');
   if (!link) return;
 
-  const hash = link.getAttribute("href");
-  const target = hash ? document.querySelector(hash) : null;
-  if (!target) return;
+  const hash = (link.getAttribute("href") || "").trim();
+  if (!hash) return;
 
   e.preventDefault();
 
-  // Close/unlock first (important because body is position:fixed while open)
+  const isHome = hash === "#home" || hash === "#top" || hash === "#";
+
+  // Close first (restores scroll INSTANTLY)
   closeMenu();
 
-  // Next frame ensures scroll lock has been removed before scrolling
+  // Double-tick: iOS sometimes needs an extra frame after unlocking fixed-body scroll
   requestAnimationFrame(() => {
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    requestAnimationFrame(() => {
+      const scroller = document.scrollingElement || document.documentElement;
+
+      if (isHome) {
+        // Smooth to top using the scrolling element (more reliable on iOS)
+        scroller.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+
+        // Failsafe: ensure we actually end at top (prevents “stuck slightly down” cases)
+        window.setTimeout(() => {
+          scroller.scrollTo({ top: 0, left: 0, behavior: "auto" });
+        }, 350);
+
+        return;
+      }
+
+      const target = document.querySelector(hash);
+      if (!target) return;
+
+      const header = document.querySelector(".top-header");
+      const nav = document.querySelector(".nav-bar");
+
+      const headerH = header ? header.offsetHeight : 0;
+      const navH =
+        nav && getComputedStyle(nav).display !== "none" ? nav.offsetHeight : 0;
+
+      const offset = headerH + navH + 12;
+
+      const y =
+        target.getBoundingClientRect().top + window.pageYOffset - offset;
+
+      scroller.scrollTo({ top: Math.max(0, Math.round(y)), left: 0, behavior: "smooth" });
+    });
   });
 });
 })();
